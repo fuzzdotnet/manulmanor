@@ -8,6 +8,8 @@ struct InventoryView: View {
     @State private var dragPosition = CGPoint.zero // Use global coordinates for drag position
     @State private var foodForSheet: Item?
     @State private var habitatFrame: CGRect = .zero // Store the habitat frame
+    @State private var trashFrame: CGRect = .zero // Store the trash area frame
+    @State private var isOverTrash: Bool = false // Track if drag is over trash
 
     // Get items filtered by category and owned status
     var filteredItems: [Item] {
@@ -71,38 +73,38 @@ struct InventoryView: View {
                                                 if !isDragging {
                                                     self.draggedItem = item
                                                     self.isDragging = true
-                                                    // Set initial position based on where the drag started
                                                     self.dragPosition = value.startLocation 
                                                 } else {
-                                                    // Update position during drag
                                                     self.dragPosition = value.location
                                                 }
+                                                // Check if over trash area
+                                                self.isOverTrash = trashFrame.contains(value.location)
                                             }
                                             .onEnded { value in
-                                                // Calculate local position within habitat
-                                                let localPosition = CGPoint(
-                                                    x: value.location.x - habitatFrame.minX,
-                                                    y: value.location.y - habitatFrame.minY
-                                                )
-                                                
-                                                // Optional: Check if localPosition is within bounds
-                                                let habitatBounds = CGRect(origin: .zero, size: habitatFrame.size)
-                                                if habitatBounds.contains(localPosition) {
-                                                    viewModel.placeItem(item, at: localPosition)
-                                                } else {
-                                                    // If dropped outside, just cancel the drag (don't place)
-                                                    // viewModel.placeItem(item, at: localPosition) // Removed this line
+                                                if let dragged = self.draggedItem {
+                                                    if trashFrame.contains(value.location) {
+                                                        // Dropped on trash: remove item
+                                                        viewModel.removeItem(dragged)
+                                                    } else {
+                                                        // Dropped elsewhere: attempt to place in habitat
+                                                        let localPosition = CGPoint(
+                                                            x: value.location.x - habitatFrame.minX,
+                                                            y: value.location.y - habitatFrame.minY
+                                                        )
+                                                        let habitatBounds = CGRect(origin: .zero, size: habitatFrame.size)
+                                                        if habitatBounds.contains(localPosition) {
+                                                            viewModel.placeItem(dragged, at: localPosition)
+                                                        }
+                                                        // If dropped outside habitat & not on trash, drag is cancelled
+                                                    }
                                                 }
                                                 
                                                 // Reset drag state
                                                 self.draggedItem = nil
                                                 self.isDragging = false
+                                                self.isOverTrash = false // Reset trash highlight
                                             }
                                     )
-                                    .onTapGesture {
-                                        // Keep tap gesture for removing
-                                        viewModel.removeItem(item)
-                                    }
                             }
                         }
                     }
@@ -136,29 +138,35 @@ struct InventoryView: View {
                                             if !isDragging {
                                                 self.draggedItem = item // Set the item being dragged
                                                 self.isDragging = true
-                                                // Set initial position based on where the drag started
                                                 self.dragPosition = value.startLocation
                                             } else {
-                                                // Update position during drag
                                                 self.dragPosition = value.location
                                             }
+                                            // Check if over trash area
+                                            self.isOverTrash = trashFrame.contains(value.location)
                                         }
                                         .onEnded { value in
                                             if let dragged = self.draggedItem {
-                                                // Check if dropped within the habitat frame
-                                                if habitatFrame.contains(value.location) {
-                                                    // Convert global drop location to local habitat coordinates
+                                                if trashFrame.contains(value.location) {
+                                                    // Dropped on trash (from inventory) - Just cancel, don't remove yet
+                                                    // Or maybe remove immediately? Let's cancel for now.
+                                                    // If we wanted to remove, we'd need a way to know it's
+                                                    // not consumable and call viewModel.removeItem(dragged)
+                                                    // Currently, removing directly from inventory isn't a feature.
+                                                } else if habitatFrame.contains(value.location) {
+                                                    // Dropped on habitat: Place item
                                                     let localPosition = CGPoint(
                                                         x: value.location.x - habitatFrame.minX,
                                                         y: value.location.y - habitatFrame.minY
                                                     )
                                                     viewModel.placeItem(dragged, at: localPosition)
                                                 }
-                                                // If dropped outside, do nothing (item stays in inventory)
+                                                // If dropped elsewhere, do nothing
                                             }
                                             // Reset drag state
                                             self.draggedItem = nil
                                             self.isDragging = false
+                                            self.isOverTrash = false // Reset trash highlight
                                         }
                                     : nil // No gesture for non-draggable items
                                 )
@@ -188,6 +196,29 @@ struct InventoryView: View {
                     .opacity(0.7)
                     .allowsHitTesting(false) // Prevent the overlay from blocking gestures
             }
+            
+            // Trash Area Overlay
+            VStack {
+                Spacer() // Pushes trash to the bottom
+                HStack {
+                    Spacer() // Pushes trash to the right
+                    GeometryReader { geo in
+                        Image(systemName: "trash")
+                            .font(.system(size: 30))
+                            .foregroundColor(isOverTrash ? .red : .gray)
+                            .padding(20)
+                            .background(isOverTrash ? Color.red.opacity(0.2) : Color.gray.opacity(0.1))
+                            .clipShape(Circle())
+                            .onAppear { trashFrame = geo.frame(in: .global) }
+                            .onChange(of: geo.frame(in: .global)) { trashFrame = $0 }
+                    }
+                    .frame(width: 80, height: 80) // Fixed frame for the trash geo reader
+                    .padding(.bottom, 30)
+                    .padding(.trailing, 30)
+                }
+            }
+            .allowsHitTesting(false) // Allow gestures to pass through VStack container
+            
         }
     }
     
