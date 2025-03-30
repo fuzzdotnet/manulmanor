@@ -92,7 +92,7 @@ func colorFor(item: Item) -> Color {
     case .furniture:
         return .brown
     case .decoration:
-        return .green
+        return Color(red: 0.2, green: 0.8, blue: 0.3) // Brighter green for better visibility
     case .hat:
         return .purple
     case .accessory:
