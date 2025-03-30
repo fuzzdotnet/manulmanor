@@ -6,11 +6,22 @@ struct InventoryView: View {
     @State private var draggedItem: Item?
     @State private var isDragging = false
     @State private var dragPosition = CGPoint(x: 0, y: 0)
+    @State private var showingFoodSelection = false
+    @State private var selectedFood: Item?
     
     // Get items filtered by category and owned status
     var filteredItems: [Item] {
         viewModel.inventory.filter { item in
-            item.type == selectedCategory && item.isPurchased
+            if item.type == selectedCategory {
+                if item.isConsumable {
+                    // For consumable items, only show if quantity > 0 or it's grasshoppers (always available)
+                    return item.id == "food_grasshoppers" || viewModel.getItemQuantity(item.id) > 0
+                } else {
+                    // For non-consumable items, show if purchased
+                    return item.isPurchased
+                }
+            }
+            return false
         }
     }
     
@@ -48,7 +59,7 @@ struct InventoryView: View {
                 // Display placed items
                 ForEach(viewModel.placedItems.filter { $0.type == .furniture || $0.type == .decoration }) { item in
                     if let position = item.position {
-                        ItemView(item: item)
+                        ItemView(item: item, showQuantity: false)
                             .position(position)
                             .onTapGesture {
                                 viewModel.removeItem(item)
@@ -58,7 +69,7 @@ struct InventoryView: View {
                 
                 // Show the dragged item
                 if let item = draggedItem, isDragging {
-                    ItemView(item: item)
+                    ItemView(item: item, showQuantity: false)
                         .position(dragPosition)
                         .opacity(0.7)
                 }
@@ -99,13 +110,61 @@ struct InventoryView: View {
                     GridItem(.flexible())
                 ], spacing: 20) {
                     ForEach(filteredItems) { item in
-                        ItemView(item: item)
+                        ItemView(item: item, showQuantity: item.isConsumable)
                             .onTapGesture {
-                                startDragging(item)
+                                handleItemTap(item)
                             }
                     }
                 }
                 .padding()
+            }
+        }
+        .sheet(isPresented: $showingFoodSelection) {
+            if let food = selectedFood {
+                FeedConfirmationView(food: food) { confirmed in
+                    if confirmed {
+                        viewModel.feedManul(with: food)
+                    }
+                    // Clear the selected food
+                    DispatchQueue.main.async {
+                        selectedFood = nil
+                    }
+                }
+            } else {
+                // If somehow the food is nil, provide a way to dismiss the sheet
+                VStack {
+                    Text("Error loading food information")
+                        .font(.headline)
+                    
+                    Button("Dismiss") {
+                        showingFoodSelection = false
+                    }
+                    .padding()
+                }
+                .padding()
+            }
+        }
+    }
+    
+    private func handleItemTap(_ item: Item) {
+        if item.type == .food {
+            // Make sure the food item can be used (has quantity > 0 or is grasshoppers)
+            if item.id == "food_grasshoppers" || viewModel.getItemQuantity(item.id) > 0 {
+                selectedFood = item
+                showingFoodSelection = true
+            } else {
+                // Show feedback that item is out of stock
+                viewModel.showFeedback("No \(item.name) left in inventory!", interactionType: "info")
+            }
+        } else if item.type == .furniture || item.type == .decoration {
+            // For furniture or decorations, start dragging
+            startDragging(item)
+        } else if item.type == .hat || item.type == .accessory {
+            // For wearable items, toggle wearing
+            if viewModel.manul.wearingItems.contains(item.id) {
+                viewModel.removeWornItem(item)
+            } else {
+                viewModel.wearItem(item)
             }
         }
     }
@@ -134,7 +193,9 @@ struct CategoryButton: View {
 }
 
 struct ItemView: View {
+    @EnvironmentObject var viewModel: ManulViewModel
     let item: Item
+    let showQuantity: Bool
     
     var body: some View {
         VStack {
@@ -149,6 +210,27 @@ struct ItemView: View {
                 Image(systemName: itemIcon)
                     .font(.system(size: 40))
                     .foregroundColor(itemColor)
+                
+                // Show quantity badge for consumable items
+                if showQuantity {
+                    let quantity = item.id == "food_grasshoppers" ? 
+                        "∞" : "\(viewModel.getItemQuantity(item.id))"
+                    
+                    VStack {
+                        HStack {
+                            Spacer()
+                            
+                            Text(quantity)
+                                .font(.system(size: 14, weight: .bold))
+                                .foregroundColor(.white)
+                                .padding(5)
+                                .background(Circle().fill(Color.orange))
+                                .padding(5)
+                        }
+                        
+                        Spacer()
+                    }
+                }
             }
             
             Text(item.name)
@@ -191,5 +273,63 @@ struct ItemView: View {
         case .accessory:
             return .pink
         }
+    }
+}
+
+// Feed confirmation view
+struct FeedConfirmationView: View {
+    @Environment(\.presentationMode) var presentationMode
+    let food: Item
+    let onConfirm: (Bool) -> Void
+    
+    var body: some View {
+        VStack(spacing: 20) {
+            // Header
+            Image(systemName: "fork.knife")
+                .font(.system(size: 60))
+                .foregroundColor(.orange)
+                .padding()
+            
+            Text("Feed \(food.name)?")
+                .font(.title2)
+                .fontWeight(.bold)
+            
+            Text(food.description)
+                .font(.body)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal)
+            
+            HStack(spacing: 30) {
+                // Cancel button
+                Button(action: {
+                    onConfirm(false)
+                    presentationMode.wrappedValue.dismiss()
+                }) {
+                    Text("Cancel")
+                        .font(.headline)
+                        .padding()
+                        .frame(minWidth: 100)
+                        .background(Color.gray.opacity(0.2))
+                        .foregroundColor(.primary)
+                        .cornerRadius(10)
+                }
+                
+                // Confirm button
+                Button(action: {
+                    onConfirm(true)
+                    presentationMode.wrappedValue.dismiss()
+                }) {
+                    Text("Feed")
+                        .font(.headline)
+                        .padding()
+                        .frame(minWidth: 100)
+                        .background(Color.orange)
+                        .foregroundColor(.white)
+                        .cornerRadius(10)
+                }
+            }
+            .padding(.top, 20)
+        }
+        .padding()
     }
 } 
