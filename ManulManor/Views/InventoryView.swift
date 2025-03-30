@@ -71,8 +71,12 @@ struct InventoryView: View {
                                                 if !isDragging {
                                                     self.draggedItem = item
                                                     self.isDragging = true
+                                                    // Set initial position based on where the drag started
+                                                    self.dragPosition = value.startLocation 
+                                                } else {
+                                                    // Update position during drag
+                                                    self.dragPosition = value.location
                                                 }
-                                                self.dragPosition = value.location // Update global position for overlay
                                             }
                                             .onEnded { value in
                                                 // Calculate local position within habitat
@@ -86,11 +90,8 @@ struct InventoryView: View {
                                                 if habitatBounds.contains(localPosition) {
                                                     viewModel.placeItem(item, at: localPosition)
                                                 } else {
-                                                    // If dropped outside, maybe remove it or snap it back?
-                                                    // For now, let's just place it where it was dropped locally.
-                                                    // Or perhaps better: cancel the drag if out of bounds?
-                                                    // Let's place it for now, can refine later.
-                                                    viewModel.placeItem(item, at: localPosition) 
+                                                    // If dropped outside, just cancel the drag (don't place)
+                                                    // viewModel.placeItem(item, at: localPosition) // Removed this line
                                                 }
                                                 
                                                 // Reset drag state
@@ -135,8 +136,12 @@ struct InventoryView: View {
                                             if !isDragging {
                                                 self.draggedItem = item // Set the item being dragged
                                                 self.isDragging = true
+                                                // Set initial position based on where the drag started
+                                                self.dragPosition = value.startLocation
+                                            } else {
+                                                // Update position during drag
+                                                self.dragPosition = value.location
                                             }
-                                            self.dragPosition = value.location // Update global drag position
                                         }
                                         .onEnded { value in
                                             if let dragged = self.draggedItem {
@@ -149,6 +154,7 @@ struct InventoryView: View {
                                                     )
                                                     viewModel.placeItem(dragged, at: localPosition)
                                                 }
+                                                // If dropped outside, do nothing (item stays in inventory)
                                             }
                                             // Reset drag state
                                             self.draggedItem = nil
