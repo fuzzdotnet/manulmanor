@@ -6,6 +6,7 @@ struct HomeView: View {
     @State private var selectedAction: String?
     @State private var isHabitatDragging = false
     @State private var habitatOffset: CGFloat = 0
+    @State private var showingFoodSelection = false
     
     // Colors for our theme
     private let primaryColor = Color(red: 0.93, green: 0.86, blue: 0.73) // Warm sand color
@@ -233,18 +234,7 @@ struct HomeView: View {
                             icon: "fork.knife",
                             color: .orange
                         ) {
-                            withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
-                                selectedAction = "feed"
-                            }
-                            
-                            // Add haptic feedback
-                            let impactMed = UIImpactFeedbackGenerator(style: .medium)
-                            impactMed.impactOccurred()
-                            
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) {
-                                viewModel.feedManul()
-                                selectedAction = nil
-                            }
+                            showingFoodSelection = true
                         }
                         
                         ImprovedActionButton(
@@ -303,6 +293,22 @@ struct HomeView: View {
         }
         .sheet(isPresented: $showingCertificate) {
             CertificateView(certificate: viewModel.generateAdoptionCertificate())
+        }
+        .sheet(isPresented: $showingFoodSelection) {
+            FoodSelectionView { foodItem in
+                withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
+                    selectedAction = "feed"
+                }
+                
+                // Add haptic feedback
+                let impactMed = UIImpactFeedbackGenerator(style: .medium)
+                impactMed.impactOccurred()
+                
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) {
+                    viewModel.feedManul(with: foodItem)
+                    selectedAction = nil
+                }
+            }
         }
     }
     
@@ -783,5 +789,122 @@ struct CertificateView: View {
             Spacer()
         }
         .background(Color(red: 0.95, green: 0.95, blue: 0.97).ignoresSafeArea())
+    }
+}
+
+// Food selection view
+struct FoodSelectionView: View {
+    @EnvironmentObject var viewModel: ManulViewModel
+    @Environment(\.presentationMode) var presentationMode
+    var onSelectFood: (Item?) -> Void
+    
+    var availableFoods: [Item] {
+        viewModel.inventory.filter { $0.type == .food && $0.isPurchased }
+    }
+    
+    var body: some View {
+        NavigationView {
+            List {
+                // Always available grasshoppers
+                Button(action: {
+                    onSelectFood(nil) // Grasshoppers are the default
+                    presentationMode.wrappedValue.dismiss()
+                }) {
+                    HStack {
+                        Image(systemName: "leaf.fill")
+                            .foregroundColor(.green)
+                            .frame(width: 30, height: 30)
+                            .background(Color.green.opacity(0.2))
+                            .clipShape(Circle())
+                        
+                        VStack(alignment: .leading) {
+                            Text("Grasshoppers")
+                                .font(.headline)
+                            Text("Common food - always free")
+                                .font(.caption)
+                                .foregroundColor(.gray)
+                        }
+                        
+                        Spacer()
+                        
+                        Text("FREE")
+                            .foregroundColor(.green)
+                            .fontWeight(.bold)
+                    }
+                    .padding(.vertical, 8)
+                }
+                
+                // Premium foods
+                ForEach(availableFoods) { food in
+                    Button(action: {
+                        onSelectFood(food)
+                        presentationMode.wrappedValue.dismiss()
+                    }) {
+                        HStack {
+                            Image(systemName: foodIcon(for: food.id))
+                                .foregroundColor(foodColor(for: food.id))
+                                .frame(width: 30, height: 30)
+                                .background(foodColor(for: food.id).opacity(0.2))
+                                .clipShape(Circle())
+                            
+                            VStack(alignment: .leading) {
+                                Text(food.name)
+                                    .font(.headline)
+                                Text(food.description)
+                                    .font(.caption)
+                                    .foregroundColor(.gray)
+                            }
+                        }
+                        .padding(.vertical, 8)
+                    }
+                }
+            }
+            .navigationTitle("Select Food")
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button("Cancel") {
+                        presentationMode.wrappedValue.dismiss()
+                    }
+                }
+            }
+        }
+    }
+    
+    func foodIcon(for foodId: String) -> String {
+        switch foodId {
+        case "food_grasshoppers":
+            return "leaf.fill"
+        case "food_pika":
+            return "hare.fill"
+        case "food_partridge":
+            return "bird.fill"
+        case "food_marmot":
+            return "tortoise.fill"
+        case "food_chicken":
+            return "bird.fill"
+        case "food_fish":
+            return "fish.fill"
+        default:
+            return "fork.knife"
+        }
+    }
+    
+    func foodColor(for foodId: String) -> Color {
+        switch foodId {
+        case "food_grasshoppers":
+            return .green
+        case "food_pika":
+            return .brown
+        case "food_partridge":
+            return .orange
+        case "food_marmot":
+            return .brown
+        case "food_chicken":
+            return .red
+        case "food_fish":
+            return .blue
+        default:
+            return .gray
+        }
     }
 } 

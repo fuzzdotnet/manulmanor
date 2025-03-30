@@ -91,22 +91,63 @@ class ManulViewModel: ObservableObject {
     
     // MARK: - Pet Interaction Functions
     
-    func feedManul() {
+    func feedManul(with foodItem: Item? = nil) {
         // Previous hunger value for feedback
         let previousHunger = manul.hunger
         
-        // Update stats
-        manul.hunger = min(1.0, manul.hunger + 0.3)
-        manul.lastFed = Date()
-        manul.happiness = min(1.0, manul.happiness + 0.1)
+        // Set default food stats for grasshoppers
+        var hungerIncrease = 0.2
+        var happinessIncrease = 0.05
+        var feedbackQuality = "basic"
+        let foodName = foodItem?.name ?? "Grasshoppers"
         
-        // Determine feedback based on improvement
-        if manul.hunger - previousHunger > 0.25 {
-            showFeedback("Yum! \(manul.name) loves this food!", interactionType: "feed")
+        // Adjust stats based on food quality if a specific food is provided
+        if let food = foodItem {
+            switch food.id {
+            case "food_grasshoppers":
+                // Base stats already set
+                break
+            case "food_pika":
+                hungerIncrease = 0.3
+                happinessIncrease = 0.1
+                feedbackQuality = "good"
+            case "food_partridge":
+                hungerIncrease = 0.4
+                happinessIncrease = 0.15
+                feedbackQuality = "good"
+            case "food_marmot":
+                hungerIncrease = 0.5
+                happinessIncrease = 0.2
+                feedbackQuality = "premium"
+            case "food_chicken":
+                hungerIncrease = 0.6
+                happinessIncrease = 0.25
+                feedbackQuality = "premium"
+            case "food_fish":
+                hungerIncrease = 0.7
+                happinessIncrease = 0.3
+                feedbackQuality = "super"
+            default:
+                break
+            }
+        }
+        
+        // Update stats
+        manul.hunger = min(1.0, manul.hunger + hungerIncrease)
+        manul.lastFed = Date()
+        manul.happiness = min(1.0, manul.happiness + happinessIncrease)
+        
+        // Determine feedback based on improvement and food quality
+        if feedbackQuality == "super" {
+            showFeedback("\(manul.name) is ecstatic about the \(foodName)!", interactionType: "feed")
+        } else if feedbackQuality == "premium" {
+            showFeedback("\(manul.name) absolutely loves the \(foodName)!", interactionType: "feed")
+        } else if feedbackQuality == "good" {
+            showFeedback("Yum! \(manul.name) really enjoys the \(foodName)!", interactionType: "feed")
         } else if manul.hunger >= 0.9 {
             showFeedback("\(manul.name) is full!", interactionType: "feed")
         } else {
-            showFeedback("\(manul.name) enjoyed the snack", interactionType: "feed")
+            showFeedback("\(manul.name) eats the \(foodName)", interactionType: "feed")
         }
         
         // Add XP for interacting
@@ -171,7 +212,7 @@ class ManulViewModel: ObservableObject {
     }
     
     // New function to show feedback with auto-dismissal
-    private func showFeedback(_ message: String, interactionType: String) {
+    func showFeedback(_ message: String, interactionType: String) {
         self.interactionFeedback = message
         self.showInteractionFeedback = true
         self.lastInteractionType = interactionType

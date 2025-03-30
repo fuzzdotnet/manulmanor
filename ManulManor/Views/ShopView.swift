@@ -101,6 +101,14 @@ struct ShopView: View {
     }
     
     func purchaseItem(_ item: Item) {
+        // Grasshoppers are always free and available
+        if item.id == "food_grasshoppers" {
+            // Just show a message that they're already available
+            // We don't need this since they're always in inventory, but just in case
+            viewModel.showFeedback("Grasshoppers are always available for free!", interactionType: "info")
+            return
+        }
+        
         // Check if player has enough coins and item is not locked by level
         guard viewModel.manul.coins >= item.price && item.unlockLevel <= viewModel.manul.level else {
             return

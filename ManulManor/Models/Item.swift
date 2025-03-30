@@ -44,8 +44,12 @@ struct Item: Identifiable, Codable, Hashable {
 // Extension with sample items
 extension Item {
     static let sampleItems: [Item] = [
-        Item(id: "food_kibble", name: "Kibble", description: "Everyday food for your manul", price: 10, imageName: "food_kibble", type: .food, unlockLevel: 1, isPurchased: true),
-        Item(id: "food_fish", name: "Fish", description: "A tasty treat", price: 25, imageName: "food_fish", type: .food, unlockLevel: 1),
+        Item(id: "food_grasshoppers", name: "Grasshoppers", description: "Common food for your manul - always free", price: 0, imageName: "food_grasshoppers", type: .food, unlockLevel: 1, isPurchased: true),
+        Item(id: "food_pika", name: "Pika", description: "A tasty small mammal", price: 15, imageName: "food_pika", type: .food, unlockLevel: 1),
+        Item(id: "food_partridge", name: "Partridge", description: "A flavorful bird", price: 30, imageName: "food_partridge", type: .food, unlockLevel: 2),
+        Item(id: "food_marmot", name: "Marmot", description: "A favorite high-calorie meal", price: 45, imageName: "food_marmot", type: .food, unlockLevel: 3),
+        Item(id: "food_chicken", name: "Chicken", description: "Premium protein source", price: 60, imageName: "food_chicken", type: .food, unlockLevel: 4),
+        Item(id: "food_fish", name: "Fish", description: "Super premium food for special occasions", price: 75, imageName: "food_fish", type: .food, unlockLevel: 5),
         
         Item(id: "hat_beanie", name: "Beanie", description: "A cozy hat for cold weather", price: 50, imageName: "hat_beanie", type: .hat, unlockLevel: 2),
         Item(id: "accessory_bowtie", name: "Bow Tie", description: "For formal occasions", price: 40, imageName: "accessory_bowtie", type: .accessory, unlockLevel: 2),
