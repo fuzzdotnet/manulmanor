@@ -1,0 +1,550 @@
+import Foundation
+import SwiftUI
+import Combine
+
+class ManulViewModel: ObservableObject {
+    // Main properties
+    @Published var manul: Manul
+    @Published var inventory: [Item]
+    @Published var placedItems: [Item] = []
+    @Published var currentQuiz: Quiz?
+    @Published var isOnboarding: Bool = false
+    @Published var notificationPermissionGranted: Bool = false
+    @Published var isSubscribed: Bool = false
+    
+    // Animation and interaction properties
+    @Published var lastInteractionType: String = ""
+    @Published var interactionFeedback: String = ""
+    @Published var showInteractionFeedback: Bool = false
+    @Published var recentRewards: [Reward] = []
+    
+    // Timers for automatic stat decay
+    private var statsUpdateTimer: Timer?
+    private var saveTimer: Timer?
+    private var interactionFeedbackTimer: Timer?
+    
+    // User defaults keys
+    private let manulKey = "manul_data"
+    private let inventoryKey = "inventory_data"
+    private let placedItemsKey = "placed_items_data"
+    private let quizKey = "quiz_data"
+    private let onboardingKey = "has_completed_onboarding"
+    
+    // Initialize with default values
+    init() {
+        if let savedManul = UserDefaults.standard.data(forKey: manulKey),
+           let decodedManul = try? JSONDecoder().decode(Manul.self, from: savedManul) {
+            self.manul = decodedManul
+        } else {
+            // First time user - will trigger onboarding
+            self.manul = Manul.newManul(name: "")
+            self.isOnboarding = true
+        }
+        
+        if let savedInventory = UserDefaults.standard.data(forKey: inventoryKey),
+           let decodedInventory = try? JSONDecoder().decode([Item].self, from: savedInventory) {
+            self.inventory = decodedInventory
+        } else {
+            // Start with default inventory
+            self.inventory = Item.sampleItems.filter { $0.isPurchased }
+        }
+        
+        if let savedPlacedItems = UserDefaults.standard.data(forKey: placedItemsKey),
+           let decodedPlacedItems = try? JSONDecoder().decode([Item].self, from: savedPlacedItems) {
+            self.placedItems = decodedPlacedItems
+        } else {
+            self.placedItems = []
+        }
+        
+        if let savedQuiz = UserDefaults.standard.data(forKey: quizKey),
+           let decodedQuiz = try? JSONDecoder().decode(Quiz.self, from: savedQuiz) {
+            self.currentQuiz = decodedQuiz
+        } else {
+            // Check if it's Monday to create a new quiz
+            let calendar = Calendar.current
+            let weekday = calendar.component(.weekday, from: Date())
+            if weekday == 2 { // Monday is 2 in Calendar.Component.weekday
+                self.currentQuiz = Quiz.generateWeeklyQuiz()
+            }
+        }
+        
+        // Start timers
+        startTimers()
+        
+        // Check if we need to generate a new quiz (on Mondays)
+        checkForWeeklyQuiz()
+    }
+    
+    // MARK: - Timer Functions
+    
+    private func startTimers() {
+        // Update stats every 30 minutes
+        statsUpdateTimer = Timer.scheduledTimer(withTimeInterval: 1800, repeats: true) { [weak self] _ in
+            self?.updateStats()
+        }
+        
+        // Save data every 5 minutes
+        saveTimer = Timer.scheduledTimer(withTimeInterval: 300, repeats: true) { [weak self] _ in
+            self?.saveData()
+        }
+    }
+    
+    // MARK: - Pet Interaction Functions
+    
+    func feedManul() {
+        // Previous hunger value for feedback
+        let previousHunger = manul.hunger
+        
+        // Update stats
+        manul.hunger = min(1.0, manul.hunger + 0.3)
+        manul.lastFed = Date()
+        manul.happiness = min(1.0, manul.happiness + 0.1)
+        
+        // Determine feedback based on improvement
+        if manul.hunger - previousHunger > 0.25 {
+            showFeedback("Yum! \(manul.name) loves this food!", interactionType: "feed")
+        } else if manul.hunger >= 0.9 {
+            showFeedback("\(manul.name) is full!", interactionType: "feed")
+        } else {
+            showFeedback("\(manul.name) enjoyed the snack", interactionType: "feed")
+        }
+        
+        // Add XP for interacting
+        addXP(amount: 5)
+        
+        // Track interaction
+        lastInteractionType = "feed"
+        
+        saveData()
+    }
+    
+    func cleanManul() {
+        // Previous hygiene value for feedback
+        let previousHygiene = manul.hygiene
+        
+        // Update stats
+        manul.hygiene = 1.0
+        manul.lastCleaned = Date()
+        
+        // Determine feedback based on improvement
+        if 1.0 - previousHygiene > 0.3 {
+            showFeedback("\(manul.name) feels fresh and clean!", interactionType: "clean")
+        } else if previousHygiene > 0.8 {
+            showFeedback("\(manul.name) was already quite clean", interactionType: "clean")
+        } else {
+            showFeedback("\(manul.name) is now clean and happy", interactionType: "clean")
+        }
+        
+        // Add XP for interacting
+        addXP(amount: 5)
+        
+        // Track interaction
+        lastInteractionType = "clean"
+        
+        saveData()
+    }
+    
+    func playWithManul() {
+        // Previous happiness value for feedback
+        let previousHappiness = manul.happiness
+        
+        // Update stats
+        manul.happiness = min(1.0, manul.happiness + 0.3)
+        manul.lastInteraction = Date()
+        
+        // Determine feedback based on improvement
+        if manul.happiness - previousHappiness > 0.25 {
+            showFeedback("\(manul.name) is having so much fun!", interactionType: "play")
+        } else if manul.happiness >= 0.9 {
+            showFeedback("\(manul.name) is very happy!", interactionType: "play")
+        } else {
+            showFeedback("\(manul.name) enjoyed playing with you", interactionType: "play")
+        }
+        
+        // Add XP for interacting
+        addXP(amount: 10)
+        
+        // Track interaction
+        lastInteractionType = "play"
+        
+        saveData()
+    }
+    
+    // New function to show feedback with auto-dismissal
+    private func showFeedback(_ message: String, interactionType: String) {
+        self.interactionFeedback = message
+        self.showInteractionFeedback = true
+        self.lastInteractionType = interactionType
+        
+        // Cancel existing timer if there is one
+        interactionFeedbackTimer?.invalidate()
+        
+        // Set timer to hide feedback after delay
+        interactionFeedbackTimer = Timer.scheduledTimer(withTimeInterval: 2.5, repeats: false) { [weak self] _ in
+            withAnimation {
+                self?.showInteractionFeedback = false
+            }
+        }
+    }
+    
+    // MARK: - Inventory Functions
+    
+    func purchaseItem(_ item: Item) {
+        guard manul.coins >= item.price else { 
+            showFeedback("Not enough coins to buy \(item.name)", interactionType: "purchase_failed")
+            return 
+        }
+        
+        // Deduct coins
+        manul.coins -= item.price
+        
+        // Add item to inventory
+        var updatedItem = item
+        updatedItem.isPurchased = true
+        
+        if let index = inventory.firstIndex(where: { $0.id == item.id }) {
+            inventory[index] = updatedItem
+        } else {
+            inventory.append(updatedItem)
+        }
+        
+        // Show feedback
+        showFeedback("Purchased \(item.name)!", interactionType: "purchase_success")
+        
+        saveData()
+    }
+    
+    func placeItem(_ item: Item, at position: CGPoint) {
+        var updatedItem = item
+        updatedItem.position = position
+        
+        if let index = placedItems.firstIndex(where: { $0.id == item.id }) {
+            placedItems[index] = updatedItem
+        } else {
+            placedItems.append(updatedItem)
+        }
+        
+        // Improve happiness slightly when decorating
+        manul.happiness = min(1.0, manul.happiness + 0.05)
+        
+        // Show feedback
+        showFeedback("\(manul.name) likes the new decoration!", interactionType: "place_item")
+        
+        saveData()
+    }
+    
+    func removeItem(_ item: Item) {
+        placedItems.removeAll { $0.id == item.id }
+        
+        // Show feedback
+        showFeedback("Removed \(item.name)", interactionType: "remove_item")
+        
+        saveData()
+    }
+    
+    func wearItem(_ item: Item) {
+        if !manul.wearingItems.contains(item.id) {
+            manul.wearingItems.append(item.id)
+            
+            // Improve happiness slightly when dressing up
+            manul.happiness = min(1.0, manul.happiness + 0.05)
+            
+            // Show feedback
+            showFeedback("\(manul.name) looks great in the \(item.name)!", interactionType: "wear_item")
+            
+            saveData()
+        }
+    }
+    
+    func removeWornItem(_ item: Item) {
+        manul.wearingItems.removeAll { $0 == item.id }
+        
+        // Show feedback
+        showFeedback("Removed \(item.name)", interactionType: "remove_worn_item")
+        
+        saveData()
+    }
+    
+    // MARK: - Quiz Functions
+    
+    func checkForWeeklyQuiz() {
+        let calendar = Calendar.current
+        let weekday = calendar.component(.weekday, from: Date())
+        
+        // If it's Monday (weekday == 2) and we don't have a quiz or it's completed
+        if weekday == 2 && (currentQuiz == nil || currentQuiz!.isCompleted) {
+            currentQuiz = Quiz.generateWeeklyQuiz()
+            saveData()
+            
+            // Send notification if permission granted
+            if notificationPermissionGranted {
+                scheduleQuizNotification()
+            }
+        }
+    }
+    
+    func submitQuizAnswer(questionIndex: Int, answerIndex: Int) -> Bool {
+        guard var quiz = currentQuiz, questionIndex < quiz.questions.count else { return false }
+        
+        let isCorrect = quiz.questions[questionIndex].correctAnswerIndex == answerIndex
+        
+        if isCorrect {
+            quiz.score += 1
+        }
+        
+        // If this is the last question, mark the quiz as completed
+        if questionIndex == quiz.questions.count - 1 {
+            quiz.isCompleted = true
+            
+            // Reward player for completing the quiz
+            let baseReward = 50
+            let bonusPerCorrect = 15
+            let coinReward = baseReward + (quiz.score * bonusPerCorrect)
+            let xpReward = 25 + (quiz.score * 10)
+            
+            // Add rewards
+            let coinRewardObj = Reward(type: .coins, amount: coinReward, timestamp: Date())
+            let xpRewardObj = Reward(type: .xp, amount: xpReward, timestamp: Date())
+            recentRewards.append(coinRewardObj)
+            recentRewards.append(xpRewardObj)
+            
+            // Award coins
+            manul.coins += coinReward
+            
+            // Award XP
+            addXP(amount: xpReward)
+            
+            // Show feedback
+            showFeedback("Quiz completed! Earned \(coinReward) coins and \(xpReward) XP", interactionType: "quiz_completed")
+        }
+        
+        currentQuiz = quiz
+        saveData()
+        
+        return isCorrect
+    }
+    
+    // MARK: - Progress Functions
+    
+    func addXP(amount: Int) {
+        manul.xp += amount
+        
+        // Check for level up
+        let xpNeededForNextLevel = manul.level * 100
+        
+        if manul.xp >= xpNeededForNextLevel {
+            manul.level += 1
+            manul.xp -= xpNeededForNextLevel
+            
+            // Give level up reward
+            let coinReward = 50 * manul.level
+            manul.coins += coinReward
+            
+            // Add to recent rewards
+            let levelUpReward = Reward(type: .levelUp, amount: manul.level, timestamp: Date())
+            let coinRewardObj = Reward(type: .coins, amount: coinReward, timestamp: Date())
+            recentRewards.append(levelUpReward)
+            recentRewards.append(coinRewardObj)
+            
+            // Show feedback
+            showFeedback("Level Up! \(manul.name) is now level \(manul.level). Earned \(coinReward) coins!", interactionType: "level_up")
+        }
+        
+        saveData()
+    }
+    
+    // Clear recent rewards after they've been displayed
+    func clearRecentRewards() {
+        recentRewards.removeAll()
+    }
+    
+    // MARK: - Utility Functions
+    
+    private func updateStats() {
+        // Calculate time since last interactions
+        let now = Date()
+        let hoursSinceLastFed = now.timeIntervalSince(manul.lastFed) / 3600
+        let hoursSinceLastCleaned = now.timeIntervalSince(manul.lastCleaned) / 3600
+        let hoursSinceLastInteraction = now.timeIntervalSince(manul.lastInteraction) / 3600
+        
+        // Decay hunger (about 25% per 24 hours)
+        let hungerDecay = min(manul.hunger, Double(hoursSinceLastFed) * 0.01)
+        manul.hunger -= hungerDecay
+        
+        // Decay hygiene (about 20% per 24 hours)
+        let hygieneDecay = min(manul.hygiene, Double(hoursSinceLastCleaned) * 0.008)
+        manul.hygiene -= hygieneDecay
+        
+        // Decay happiness (about 15% per 24 hours)
+        let happinessDecay = min(manul.happiness, Double(hoursSinceLastInteraction) * 0.006)
+        manul.happiness -= happinessDecay
+        
+        saveData()
+    }
+    
+    func generateAdoptionCertificate() -> UIImage {
+        // In a real implementation, this would render a certificate using Core Graphics or similar
+        // For now, we're just returning a placeholder
+        let renderer = UIGraphicsImageRenderer(size: CGSize(width: 800, height: 600))
+        
+        let image = renderer.image { context in
+            // Improved certificate styling
+            
+            // Background texture
+            let backgroundPattern = UIColor(red: 0.95, green: 0.93, blue: 0.88, alpha: 1.0)
+            backgroundPattern.setFill()
+            context.fill(CGRect(x: 0, y: 0, width: 800, height: 600))
+            
+            // Border
+            let borderColor = UIColor(red: 0.47, green: 0.33, blue: 0.28, alpha: 1.0)
+            borderColor.setStroke()
+            let borderWidth: CGFloat = 8
+            let borderRect = CGRect(x: borderWidth/2, y: borderWidth/2, width: 800-borderWidth, height: 600-borderWidth)
+            context.stroke(borderRect.insetBy(dx: 10, dy: 10))
+            
+            // Inner content area
+            UIColor.white.withAlphaComponent(0.6).setFill()
+            let contentRect = CGRect(x: 40, y: 40, width: 720, height: 520)
+            let contentPath = UIBezierPath(roundedRect: contentRect, cornerRadius: 12)
+            contentPath.fill()
+            
+            // Title
+            let titleFont = UIFont.systemFont(ofSize: 36, weight: .bold)
+            let titleAttributes: [NSAttributedString.Key: Any] = [
+                .font: titleFont,
+                .foregroundColor: borderColor
+            ]
+            
+            let titleString = "Manul Adoption Certificate"
+            let titleSize = titleString.size(withAttributes: titleAttributes)
+            let titleRect = CGRect(x: 400 - titleSize.width/2, y: 70, width: titleSize.width, height: titleSize.height)
+            titleString.draw(in: titleRect, withAttributes: titleAttributes)
+            
+            // Decorative elements
+            borderColor.withAlphaComponent(0.2).setFill()
+            let paw1 = UIBezierPath(ovalIn: CGRect(x: 80, y: 60, width: 40, height: 40))
+            paw1.fill()
+            
+            let paw2 = UIBezierPath(ovalIn: CGRect(x: 680, y: 60, width: 40, height: 40))
+            paw2.fill()
+            
+            // Content
+            let contentFont = UIFont.systemFont(ofSize: 24)
+            let contentAttributes: [NSAttributedString.Key: Any] = [
+                .font: contentFont,
+                .foregroundColor: UIColor.black
+            ]
+            
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateStyle = .long
+            
+            let nameString = "This certifies that \(self.manul.name) has been adopted by:"
+            let nameRect = CGRect(x: 100, y: 170, width: 600, height: 50)
+            nameString.draw(in: nameRect, withAttributes: contentAttributes)
+            
+            let playerNameString = "Player Name"
+            let playerNameRect = CGRect(x: 100, y: 230, width: 600, height: 50)
+            playerNameString.draw(in: playerNameRect, withAttributes: contentAttributes)
+            
+            let dateString = "On \(dateFormatter.string(from: Date()))"
+            let dateRect = CGRect(x: 100, y: 290, width: 600, height: 50)
+            dateString.draw(in: dateRect, withAttributes: contentAttributes)
+            
+            // Conservation fact
+            let factFont = UIFont.italicSystemFont(ofSize: 18)
+            let factAttributes: [NSAttributedString.Key: Any] = [
+                .font: factFont,
+                .foregroundColor: UIColor.darkGray
+            ]
+            
+            let factString = "Pallas cats are listed as Near Threatened due to habitat loss and hunting."
+            let factRect = CGRect(x: 100, y: 400, width: 600, height: 50)
+            factString.draw(in: factRect, withAttributes: factAttributes)
+            
+            // Footer
+            let footerFont = UIFont.systemFont(ofSize: 14)
+            let footerAttributes: [NSAttributedString.Key: Any] = [
+                .font: footerFont,
+                .foregroundColor: UIColor.gray
+            ]
+            
+            let footerString = "www.manulmanor.com - #ManulMonday"
+            let footerRect = CGRect(x: 100, y: 500, width: 600, height: 30)
+            footerString.draw(in: footerRect, withAttributes: footerAttributes)
+        }
+        
+        return image
+    }
+    
+    private func scheduleQuizNotification() {
+        // This would typically use UNUserNotificationCenter
+        // Placeholder implementation
+    }
+    
+    // MARK: - Data Persistence
+    
+    func saveData() {
+        let encoder = JSONEncoder()
+        
+        if let encodedManul = try? encoder.encode(manul) {
+            UserDefaults.standard.set(encodedManul, forKey: manulKey)
+        }
+        
+        if let encodedInventory = try? encoder.encode(inventory) {
+            UserDefaults.standard.set(encodedInventory, forKey: inventoryKey)
+        }
+        
+        if let encodedPlacedItems = try? encoder.encode(placedItems) {
+            UserDefaults.standard.set(encodedPlacedItems, forKey: placedItemsKey)
+        }
+        
+        if let quiz = currentQuiz, let encodedQuiz = try? encoder.encode(quiz) {
+            UserDefaults.standard.set(encodedQuiz, forKey: quizKey)
+        }
+        
+        UserDefaults.standard.set(!isOnboarding, forKey: onboardingKey)
+    }
+    
+    func completeOnboarding(withManulName name: String) {
+        manul.name = name
+        isOnboarding = false
+        saveData()
+        
+        // Show welcome feedback
+        showFeedback("Welcome to Manul Manor, \(name)!", interactionType: "onboarding_complete")
+    }
+}
+
+// Reward struct for tracking and displaying rewards
+struct Reward: Identifiable, Equatable {
+    var id = UUID()
+    var type: RewardType
+    var amount: Int
+    var timestamp: Date
+    
+    static func == (lhs: Reward, rhs: Reward) -> Bool {
+        return lhs.id == rhs.id
+    }
+    
+    enum RewardType {
+        case coins, xp, levelUp, item
+        
+        var icon: String {
+            switch self {
+            case .coins: return "dollarsign.circle.fill"
+            case .xp: return "star.fill"
+            case .levelUp: return "arrow.up.circle.fill"
+            case .item: return "gift.fill"
+            }
+        }
+        
+        var color: Color {
+            switch self {
+            case .coins: return .yellow
+            case .xp: return .orange
+            case .levelUp: return .green
+            case .item: return .purple
+            }
+        }
+    }
+} 
