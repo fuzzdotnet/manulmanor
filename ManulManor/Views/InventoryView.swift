@@ -131,8 +131,8 @@ struct InventoryView: View {
                         ForEach(filteredItems) { item in
                             ItemView(item: item, showQuantity: item.isConsumable)
                                 .gesture(
-                                    // Only allow dragging for placeable items
-                                    (item.type == .furniture || item.type == .decoration) ?
+                                    // Only allow dragging for placeable items THAT ARE NOT ALREADY PLACED
+                                    (item.type == .furniture || item.type == .decoration) && !viewModel.placedItems.contains(where: { $0.id == item.id }) ?
                                     DragGesture(coordinateSpace: .global) // Use global coordinate space
                                         .onChanged { value in
                                             if !isDragging {
