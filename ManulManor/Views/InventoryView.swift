@@ -58,19 +58,37 @@ struct InventoryView: View {
                 // Display placed items
                 ForEach(viewModel.placedItems.filter { $0.type == .furniture || $0.type == .decoration }) { item in
                     if let position = item.position {
-                        ItemView(item: item, showQuantity: false)
-                            .position(position)
-                            .onTapGesture {
-                                viewModel.removeItem(item)
-                            }
+                        ZStack {
+                            Circle()
+                                .fill(Color.white)
+                                .frame(width: 60, height: 60)
+                                .shadow(color: Color.black.opacity(0.2), radius: 3, x: 0, y: 2)
+                            
+                            Image(systemName: iconFor(item))
+                                .font(.system(size: 30))
+                                .foregroundColor(colorFor(item: item))
+                        }
+                        .position(position)
+                        .onTapGesture {
+                            viewModel.removeItem(item)
+                        }
                     }
                 }
                 
                 // Show the dragged item
                 if let item = draggedItem, isDragging {
-                    ItemView(item: item, showQuantity: false)
-                        .position(dragPosition)
-                        .opacity(0.7)
+                    ZStack {
+                        Circle()
+                            .fill(Color.white)
+                            .frame(width: 60, height: 60)
+                            .shadow(color: Color.black.opacity(0.2), radius: 3, x: 0, y: 2)
+                        
+                        Image(systemName: iconFor(item))
+                            .font(.system(size: 30))
+                            .foregroundColor(colorFor(item: item))
+                    }
+                    .position(dragPosition)
+                    .opacity(0.7)
                 }
             }
             .gesture(

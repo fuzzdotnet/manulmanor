@@ -188,12 +188,13 @@ struct HomeView: View {
                                 // This would be the actual item image in the final version
                                 ZStack {
                                     Circle()
-                                        .fill(Color.yellow.opacity(0.2))
-                                        .frame(width: 40, height: 40)
+                                        .fill(Color.white)
+                                        .frame(width: 50, height: 50)
+                                        .shadow(color: Color.black.opacity(0.2), radius: 3, x: 0, y: 2)
                                     
                                     Image(systemName: iconFor(item))
-                                        .font(.system(size: 20))
-                                        .foregroundColor(.yellow)
+                                        .font(.system(size: 25))
+                                        .foregroundColor(colorFor(item: item))
                                 }
                                 .position(position)
                                 .shadow(color: Color.black.opacity(0.1), radius: 2, x: 0, y: 2)
