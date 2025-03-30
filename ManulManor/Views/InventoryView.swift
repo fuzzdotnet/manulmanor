@@ -63,7 +63,43 @@ struct InventoryView: View {
                             if let position = item.position {
                                 PlacedItemView(item: item) // Use a dedicated view for placed items
                                     .position(position)
+                                    .gesture(
+                                        // Add drag gesture to move already placed items
+                                        DragGesture(coordinateSpace: .global)
+                                            .onChanged { value in
+                                                // Start dragging this item
+                                                if !isDragging {
+                                                    self.draggedItem = item
+                                                    self.isDragging = true
+                                                }
+                                                self.dragPosition = value.location // Update global position for overlay
+                                            }
+                                            .onEnded { value in
+                                                // Calculate local position within habitat
+                                                let localPosition = CGPoint(
+                                                    x: value.location.x - habitatFrame.minX,
+                                                    y: value.location.y - habitatFrame.minY
+                                                )
+                                                
+                                                // Optional: Check if localPosition is within bounds
+                                                let habitatBounds = CGRect(origin: .zero, size: habitatFrame.size)
+                                                if habitatBounds.contains(localPosition) {
+                                                    viewModel.placeItem(item, at: localPosition)
+                                                } else {
+                                                    // If dropped outside, maybe remove it or snap it back?
+                                                    // For now, let's just place it where it was dropped locally.
+                                                    // Or perhaps better: cancel the drag if out of bounds?
+                                                    // Let's place it for now, can refine later.
+                                                    viewModel.placeItem(item, at: localPosition) 
+                                                }
+                                                
+                                                // Reset drag state
+                                                self.draggedItem = nil
+                                                self.isDragging = false
+                                            }
+                                    )
                                     .onTapGesture {
+                                        // Keep tap gesture for removing
                                         viewModel.removeItem(item)
                                     }
                             }
