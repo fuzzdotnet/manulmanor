@@ -111,19 +111,31 @@ struct ShopView: View {
         
         // Check if player has enough coins and item is not locked by level
         guard viewModel.manul.coins >= item.price && item.unlockLevel <= viewModel.manul.level else {
+            // Optionally provide feedback why purchase failed (e.g., insufficient funds, level lock)
+            if viewModel.manul.coins < item.price {
+                 viewModel.showFeedback("Not enough coins!", interactionType: "error")
+            } else if item.unlockLevel > viewModel.manul.level {
+                 viewModel.showFeedback("Requires Level \(item.unlockLevel)!", interactionType: "error")
+            }
             return
         }
         
-        // Check if item is already purchased
-        guard !viewModel.inventory.contains(where: { $0.id == item.id && $0.isPurchased }) else {
-            return
+        // Check if item is already purchased (only for non-consumables)
+        if !item.isConsumable {
+            guard !viewModel.inventory.contains(where: { $0.id == item.id && $0.isPurchased }) else {
+                // Feedback for trying to buy already owned unique item
+                viewModel.showFeedback("You already own this item!", interactionType: "info")
+                return
+            }
         }
         
+        // Attempt to purchase the item via the ViewModel
         viewModel.purchaseItem(item)
     }
 }
 
 struct ShopItemView: View {
+    @EnvironmentObject var viewModel: ManulViewModel
     let item: Item
     let isLocked: Bool
     let isPurchased: Bool
@@ -164,8 +176,8 @@ struct ShopItemView: View {
                     }
                 }
                 
-                // Purchased badge
-                if isPurchased {
+                // Purchased badge for non-consumable items
+                if isPurchased && !item.isConsumable {
                     VStack {
                         HStack {
                             Spacer()
@@ -180,6 +192,27 @@ struct ShopItemView: View {
                         Spacer()
                     }
                 }
+                
+                // Quantity badge for consumable items
+                if item.isConsumable && isPurchased {
+                    let quantity = viewModel.getItemQuantity(item.id)
+                    if quantity > 0 || item.id == "food_grasshoppers" {
+                        VStack {
+                            HStack {
+                                Spacer()
+                                
+                                Text(item.id == "food_grasshoppers" ? "∞" : "\(quantity)")
+                                    .font(.system(size: 16, weight: .bold))
+                                    .foregroundColor(.white)
+                                    .padding(6)
+                                    .background(Circle().fill(Color.orange))
+                                    .padding(8)
+                            }
+                            
+                            Spacer()
+                        }
+                    }
+                }
             }
             
             // Item details
@@ -192,7 +225,7 @@ struct ShopItemView: View {
                     .font(.caption)
                     .foregroundColor(.secondary)
                     .lineLimit(2)
-                    .frame(height: 30)
+                    .frame(minHeight: 36) // Give more space for description
                 
                 // Price and buy button
                 HStack {
@@ -209,9 +242,9 @@ struct ShopItemView: View {
                     
                     Spacer()
                     
-                    // Buy button
+                    // Buy button - different text for consumables
                     Button(action: action) {
-                        Text(isPurchased ? "Owned" : "Buy")
+                        Text(buttonText)
                             .font(.caption)
                             .fontWeight(.bold)
                             .padding(.horizontal, 12)
@@ -220,21 +253,29 @@ struct ShopItemView: View {
                             .foregroundColor(.white)
                             .cornerRadius(12)
                     }
-                    .disabled(isLocked || isPurchased || !canAfford)
+                    .disabled(isLocked || (!canAfford) || (!item.isConsumable && isPurchased))
                 }
             }
             .padding(10)
             .background(Color.white)
             .cornerRadius(15)
         }
-        .frame(minHeight: 200)
+        .frame(minHeight: 220) // Increased height to accommodate more text
         .background(Color.white)
         .cornerRadius(15)
         .shadow(radius: 3)
     }
     
+    var buttonText: String {
+        if item.isConsumable {
+            return isPurchased ? "Buy More" : "Buy"
+        } else {
+            return isPurchased ? "Owned" : "Buy"
+        }
+    }
+    
     var buttonColor: Color {
-        if isPurchased {
+        if !item.isConsumable && isPurchased {
             return .gray
         } else if isLocked || !canAfford {
             return .gray.opacity(0.7)

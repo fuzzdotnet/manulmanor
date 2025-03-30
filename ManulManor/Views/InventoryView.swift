@@ -6,8 +6,7 @@ struct InventoryView: View {
     @State private var draggedItem: Item?
     @State private var isDragging = false
     @State private var dragPosition = CGPoint(x: 0, y: 0)
-    @State private var showingFoodSelection = false
-    @State private var selectedFood: Item?
+    @State private var foodForSheet: Item?
     
     // Get items filtered by category and owned status
     var filteredItems: [Item] {
@@ -119,29 +118,11 @@ struct InventoryView: View {
                 .padding()
             }
         }
-        .sheet(isPresented: $showingFoodSelection) {
-            if let food = selectedFood {
-                FeedConfirmationView(food: food) { confirmed in
-                    if confirmed {
-                        viewModel.feedManul(with: food)
-                    }
-                    // Clear the selected food
-                    DispatchQueue.main.async {
-                        selectedFood = nil
-                    }
+        .sheet(item: $foodForSheet) { food in
+            FeedConfirmationView(food: food) { confirmed in
+                if confirmed {
+                    viewModel.feedManul(with: food)
                 }
-            } else {
-                // If somehow the food is nil, provide a way to dismiss the sheet
-                VStack {
-                    Text("Error loading food information")
-                        .font(.headline)
-                    
-                    Button("Dismiss") {
-                        showingFoodSelection = false
-                    }
-                    .padding()
-                }
-                .padding()
             }
         }
     }
@@ -150,8 +131,7 @@ struct InventoryView: View {
         if item.type == .food {
             // Make sure the food item can be used (has quantity > 0 or is grasshoppers)
             if item.id == "food_grasshoppers" || viewModel.getItemQuantity(item.id) > 0 {
-                selectedFood = item
-                showingFoodSelection = true
+                foodForSheet = item
             } else {
                 // Show feedback that item is out of stock
                 viewModel.showFeedback("No \(item.name) left in inventory!", interactionType: "info")
