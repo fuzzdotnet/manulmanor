@@ -57,7 +57,7 @@ extension Item {
         Item(id: "accessory_bowtie", name: "Bow Tie", description: "For formal occasions", price: 40, imageName: "accessory_bowtie", type: .accessory, unlockLevel: 2),
         
         Item(id: "furniture_bed", name: "Cozy Bed", description: "A comfy bed for your manul", price: 100, imageName: "furniture_bed", type: .furniture, unlockLevel: 3),
-        Item(id: "decoration_plant", name: "Plant", description: "Adds some nature to the manor", price: 75, imageName: "decoration_plant", type: .decoration, unlockLevel: 3),
+        Item(id: "decoration_plant", name: "Plant", description: "Adds some nature to the manor", price: 20, imageName: "decoration_plant", type: .decoration, unlockLevel: 1),
         
         Item(id: "toy_ball", name: "Yarn Ball", description: "A fun toy to play with", price: 30, imageName: "toy_ball", type: .toy, unlockLevel: 1, isPurchased: true)
     ]
