@@ -799,7 +799,12 @@ struct FoodSelectionView: View {
     var onSelectFood: (Item?) -> Void
     
     var availableFoods: [Item] {
-        viewModel.inventory.filter { $0.type == .food && $0.isPurchased && (viewModel.getItemQuantity($0.id) > 0 || $0.id == "food_grasshoppers") }
+        viewModel.inventory.filter { 
+            $0.type == .food && 
+            $0.isPurchased && 
+            $0.id != "food_grasshoppers" && // Filter out grasshoppers since we show them separately
+            (viewModel.getItemQuantity($0.id) > 0 || $0.id == "food_grasshoppers") 
+        }
     }
     
     var body: some View {
