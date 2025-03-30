@@ -129,10 +129,13 @@ struct InventoryView: View {
                         GridItem(.flexible())
                     ], spacing: 20) {
                         ForEach(filteredItems) { item in
+                            let isPlaced = (item.type == .furniture || item.type == .decoration) && viewModel.placedItems.contains(where: { $0.id == item.id })
+                            
                             ItemView(item: item, showQuantity: item.isConsumable)
+                                .opacity(isPlaced ? 0.5 : 1.0) // Gray out if placed
                                 .gesture(
                                     // Only allow dragging for placeable items THAT ARE NOT ALREADY PLACED
-                                    (item.type == .furniture || item.type == .decoration) && !viewModel.placedItems.contains(where: { $0.id == item.id }) ?
+                                    (item.type == .furniture || item.type == .decoration) && !isPlaced ?
                                     DragGesture(coordinateSpace: .global) // Use global coordinate space
                                         .onChanged { value in
                                             if !isDragging {
