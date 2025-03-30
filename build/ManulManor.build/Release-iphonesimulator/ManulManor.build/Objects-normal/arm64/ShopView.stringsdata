@@ -1,0 +1,144 @@
+{
+  "source": "/Users/danfletcher/Documents/Manul Manor/ManulManor/ManulManor/Views/ShopView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Shop",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 13
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 23
+        }
+      },
+      {
+        "comment": "",
+        "key": "Level %lld",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 151
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 197
+        }
+      },
+      {
+        "comment": "",
+        "key": "Owned",
+        "location": {
+          "startingColumn": 44,
+          "startingLine": 206
+        }
+      },
+      {
+        "comment": "",
+        "key": "Buy",
+        "location": {
+          "startingColumn": 54,
+          "startingLine": 206
+        }
+      },
+      {
+        "comment": "",
+        "key": "Manor Club",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 297
+        }
+      },
+      {
+        "comment": "",
+        "key": "Become a Club Member and get exclusive benefits!",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 301
+        }
+      },
+      {
+        "comment": "",
+        "key": "Subscription automatically renews unless canceled at least 24 hours before the end of the current period.",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 345
+        }
+      },
+      {
+        "comment": "",
+        "key": "$4.99 per month",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 320
+        }
+      },
+      {
+        "comment": "",
+        "key": "Cancel anytime",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 324
+        }
+      },
+      {
+        "comment": "",
+        "key": "Subscribe Now",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 335
+        }
+      },
+      {
+        "comment": "",
+        "key": "Adopt Again",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 382
+        }
+      },
+      {
+        "comment": "",
+        "key": "Help protect real Pallas cats in the wild!",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 386
+        }
+      },
+      {
+        "comment": "",
+        "key": "Your donation goes to conservation partners working to protect Pallas cat habitats and populations through research and education.",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 392
+        }
+      },
+      {
+        "comment": "",
+        "key": "100% of profits from Adopt Again purchases are donated to Pallas cat conservation organizations.",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 425
+        }
+      },
+      {
+        "comment": "",
+        "key": "Recommended",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 472
+        }
+      }
+    ]
+  },
+  "version": 1
+}

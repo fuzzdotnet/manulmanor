@@ -1,0 +1,75 @@
+{
+  "" : {
+    "const-values" : "/Users/danfletcher/Documents/Manul Manor/ManulManor/build/ManulManor.build/Release-iphonesimulator/ManulManor.build/Objects-normal/arm64/ManulManor-master.swiftconstvalues",
+    "dependencies" : "/Users/danfletcher/Documents/Manul Manor/ManulManor/build/ManulManor.build/Release-iphonesimulator/ManulManor.build/Objects-normal/arm64/ManulManor-master.d",
+    "diagnostics" : "/Users/danfletcher/Documents/Manul Manor/ManulManor/build/ManulManor.build/Release-iphonesimulator/ManulManor.build/Objects-normal/arm64/ManulManor-master.dia",
+    "emit-module-dependencies" : "/Users/danfletcher/Documents/Manul Manor/ManulManor/build/ManulManor.build/Release-iphonesimulator/ManulManor.build/Objects-normal/arm64/ManulManor-master-emit-module.d",
+    "emit-module-diagnostics" : "/Users/danfletcher/Documents/Manul Manor/ManulManor/build/ManulManor.build/Release-iphonesimulator/ManulManor.build/Objects-normal/arm64/ManulManor-master-emit-module.dia",
+    "swift-dependencies" : "/Users/danfletcher/Documents/Manul Manor/ManulManor/build/ManulManor.build/Release-iphonesimulator/ManulManor.build/Objects-normal/arm64/ManulManor-master.swiftdeps"
+  },
+  "/Users/danfletcher/Documents/Manul Manor/ManulManor/ManulManor/ContentView.swift" : {
+    "index-unit-output-path" : "/ManulManor.build/Release-iphonesimulator/ManulManor.build/Objects-normal/arm64/ContentView.o",
+    "llvm-bc" : "/Users/danfletcher/Documents/Manul Manor/ManulManor/build/ManulManor.build/Release-iphonesimulator/ManulManor.build/Objects-normal/arm64/ContentView.bc",
+    "object" : "/Users/danfletcher/Documents/Manul Manor/ManulManor/build/ManulManor.build/Release-iphonesimulator/ManulManor.build/Objects-normal/arm64/ContentView.o"
+  },
+  "/Users/danfletcher/Documents/Manul Manor/ManulManor/ManulManor/ManulManorApp.swift" : {
+    "index-unit-output-path" : "/ManulManor.build/Release-iphonesimulator/ManulManor.build/Objects-normal/arm64/ManulManorApp.o",
+    "llvm-bc" : "/Users/danfletcher/Documents/Manul Manor/ManulManor/build/ManulManor.build/Release-iphonesimulator/ManulManor.build/Objects-normal/arm64/ManulManorApp.bc",
+    "object" : "/Users/danfletcher/Documents/Manul Manor/ManulManor/build/ManulManor.build/Release-iphonesimulator/ManulManor.build/Objects-normal/arm64/ManulManorApp.o"
+  },
+  "/Users/danfletcher/Documents/Manul Manor/ManulManor/ManulManor/Models/Item.swift" : {
+    "index-unit-output-path" : "/ManulManor.build/Release-iphonesimulator/ManulManor.build/Objects-normal/arm64/Item.o",
+    "llvm-bc" : "/Users/danfletcher/Documents/Manul Manor/ManulManor/build/ManulManor.build/Release-iphonesimulator/ManulManor.build/Objects-normal/arm64/Item.bc",
+    "object" : "/Users/danfletcher/Documents/Manul Manor/ManulManor/build/ManulManor.build/Release-iphonesimulator/ManulManor.build/Objects-normal/arm64/Item.o"
+  },
+  "/Users/danfletcher/Documents/Manul Manor/ManulManor/ManulManor/Models/Manul.swift" : {
+    "index-unit-output-path" : "/ManulManor.build/Release-iphonesimulator/ManulManor.build/Objects-normal/arm64/Manul.o",
+    "llvm-bc" : "/Users/danfletcher/Documents/Manul Manor/ManulManor/build/ManulManor.build/Release-iphonesimulator/ManulManor.build/Objects-normal/arm64/Manul.bc",
+    "object" : "/Users/danfletcher/Documents/Manul Manor/ManulManor/build/ManulManor.build/Release-iphonesimulator/ManulManor.build/Objects-normal/arm64/Manul.o"
+  },
+  "/Users/danfletcher/Documents/Manul Manor/ManulManor/ManulManor/Models/Quiz.swift" : {
+    "index-unit-output-path" : "/ManulManor.build/Release-iphonesimulator/ManulManor.build/Objects-normal/arm64/Quiz.o",
+    "llvm-bc" : "/Users/danfletcher/Documents/Manul Manor/ManulManor/build/ManulManor.build/Release-iphonesimulator/ManulManor.build/Objects-normal/arm64/Quiz.bc",
+    "object" : "/Users/danfletcher/Documents/Manul Manor/ManulManor/build/ManulManor.build/Release-iphonesimulator/ManulManor.build/Objects-normal/arm64/Quiz.o"
+  },
+  "/Users/danfletcher/Documents/Manul Manor/ManulManor/ManulManor/ViewModels/ManulViewModel.swift" : {
+    "index-unit-output-path" : "/ManulManor.build/Release-iphonesimulator/ManulManor.build/Objects-normal/arm64/ManulViewModel.o",
+    "llvm-bc" : "/Users/danfletcher/Documents/Manul Manor/ManulManor/build/ManulManor.build/Release-iphonesimulator/ManulManor.build/Objects-normal/arm64/ManulViewModel.bc",
+    "object" : "/Users/danfletcher/Documents/Manul Manor/ManulManor/build/ManulManor.build/Release-iphonesimulator/ManulManor.build/Objects-normal/arm64/ManulViewModel.o"
+  },
+  "/Users/danfletcher/Documents/Manul Manor/ManulManor/ManulManor/Views/HomeView.swift" : {
+    "index-unit-output-path" : "/ManulManor.build/Release-iphonesimulator/ManulManor.build/Objects-normal/arm64/HomeView.o",
+    "llvm-bc" : "/Users/danfletcher/Documents/Manul Manor/ManulManor/build/ManulManor.build/Release-iphonesimulator/ManulManor.build/Objects-normal/arm64/HomeView.bc",
+    "object" : "/Users/danfletcher/Documents/Manul Manor/ManulManor/build/ManulManor.build/Release-iphonesimulator/ManulManor.build/Objects-normal/arm64/HomeView.o"
+  },
+  "/Users/danfletcher/Documents/Manul Manor/ManulManor/ManulManor/Views/InventoryView.swift" : {
+    "index-unit-output-path" : "/ManulManor.build/Release-iphonesimulator/ManulManor.build/Objects-normal/arm64/InventoryView.o",
+    "llvm-bc" : "/Users/danfletcher/Documents/Manul Manor/ManulManor/build/ManulManor.build/Release-iphonesimulator/ManulManor.build/Objects-normal/arm64/InventoryView.bc",
+    "object" : "/Users/danfletcher/Documents/Manul Manor/ManulManor/build/ManulManor.build/Release-iphonesimulator/ManulManor.build/Objects-normal/arm64/InventoryView.o"
+  },
+  "/Users/danfletcher/Documents/Manul Manor/ManulManor/ManulManor/Views/OnboardingView.swift" : {
+    "index-unit-output-path" : "/ManulManor.build/Release-iphonesimulator/ManulManor.build/Objects-normal/arm64/OnboardingView.o",
+    "llvm-bc" : "/Users/danfletcher/Documents/Manul Manor/ManulManor/build/ManulManor.build/Release-iphonesimulator/ManulManor.build/Objects-normal/arm64/OnboardingView.bc",
+    "object" : "/Users/danfletcher/Documents/Manul Manor/ManulManor/build/ManulManor.build/Release-iphonesimulator/ManulManor.build/Objects-normal/arm64/OnboardingView.o"
+  },
+  "/Users/danfletcher/Documents/Manul Manor/ManulManor/ManulManor/Views/QuizView.swift" : {
+    "index-unit-output-path" : "/ManulManor.build/Release-iphonesimulator/ManulManor.build/Objects-normal/arm64/QuizView.o",
+    "llvm-bc" : "/Users/danfletcher/Documents/Manul Manor/ManulManor/build/ManulManor.build/Release-iphonesimulator/ManulManor.build/Objects-normal/arm64/QuizView.bc",
+    "object" : "/Users/danfletcher/Documents/Manul Manor/ManulManor/build/ManulManor.build/Release-iphonesimulator/ManulManor.build/Objects-normal/arm64/QuizView.o"
+  },
+  "/Users/danfletcher/Documents/Manul Manor/ManulManor/ManulManor/Views/SettingsView.swift" : {
+    "index-unit-output-path" : "/ManulManor.build/Release-iphonesimulator/ManulManor.build/Objects-normal/arm64/SettingsView.o",
+    "llvm-bc" : "/Users/danfletcher/Documents/Manul Manor/ManulManor/build/ManulManor.build/Release-iphonesimulator/ManulManor.build/Objects-normal/arm64/SettingsView.bc",
+    "object" : "/Users/danfletcher/Documents/Manul Manor/ManulManor/build/ManulManor.build/Release-iphonesimulator/ManulManor.build/Objects-normal/arm64/SettingsView.o"
+  },
+  "/Users/danfletcher/Documents/Manul Manor/ManulManor/ManulManor/Views/ShopView.swift" : {
+    "index-unit-output-path" : "/ManulManor.build/Release-iphonesimulator/ManulManor.build/Objects-normal/arm64/ShopView.o",
+    "llvm-bc" : "/Users/danfletcher/Documents/Manul Manor/ManulManor/build/ManulManor.build/Release-iphonesimulator/ManulManor.build/Objects-normal/arm64/ShopView.bc",
+    "object" : "/Users/danfletcher/Documents/Manul Manor/ManulManor/build/ManulManor.build/Release-iphonesimulator/ManulManor.build/Objects-normal/arm64/ShopView.o"
+  },
+  "/Users/danfletcher/Documents/Manul Manor/ManulManor/build/ManulManor.build/Release-iphonesimulator/ManulManor.build/DerivedSources/GeneratedAssetSymbols.swift" : {
+    "index-unit-output-path" : "/ManulManor.build/Release-iphonesimulator/ManulManor.build/Objects-normal/arm64/GeneratedAssetSymbols.o",
+    "llvm-bc" : "/Users/danfletcher/Documents/Manul Manor/ManulManor/build/ManulManor.build/Release-iphonesimulator/ManulManor.build/Objects-normal/arm64/GeneratedAssetSymbols.bc",
+    "object" : "/Users/danfletcher/Documents/Manul Manor/ManulManor/build/ManulManor.build/Release-iphonesimulator/ManulManor.build/Objects-normal/arm64/GeneratedAssetSymbols.o"
+  }
+}

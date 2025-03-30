@@ -1,0 +1,160 @@
+{
+  "source": "/Users/danfletcher/Documents/Manul Manor/ManulManor/ManulManor/Views/QuizView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Manul Monday Quiz",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 14
+        }
+      },
+      {
+        "comment": "",
+        "key": "Question %lld of %lld",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 48
+        }
+      },
+      {
+        "comment": "",
+        "key": "Explanation:",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 109
+        }
+      },
+      {
+        "comment": "",
+        "key": "Correct!",
+        "location": {
+          "startingColumn": 57,
+          "startingLine": 102
+        }
+      },
+      {
+        "comment": "",
+        "key": "Incorrect",
+        "location": {
+          "startingColumn": 70,
+          "startingLine": 102
+        }
+      },
+      {
+        "comment": "",
+        "key": "Next Question",
+        "location": {
+          "startingColumn": 80,
+          "startingLine": 128
+        }
+      },
+      {
+        "comment": "",
+        "key": "See Results",
+        "location": {
+          "startingColumn": 98,
+          "startingLine": 128
+        }
+      },
+      {
+        "comment": "",
+        "key": "Quiz Completed!",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 161
+        }
+      },
+      {
+        "comment": "",
+        "key": "Great job! You've completed this week's Manul Monday Quiz.",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 165
+        }
+      },
+      {
+        "comment": "",
+        "key": "Come back next Monday for a new quiz!",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 216
+        }
+      },
+      {
+        "comment": "",
+        "key": "Your Score",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 171
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld / %lld",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 175
+        }
+      },
+      {
+        "comment": "",
+        "key": "Rewards Earned:",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 188
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld coins",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 195
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld XP",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 205
+        }
+      },
+      {
+        "comment": "",
+        "key": "No Quiz Available",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 234
+        }
+      },
+      {
+        "comment": "",
+        "key": "Manul Monday quizzes are available every Monday!",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 239
+        }
+      },
+      {
+        "comment": "",
+        "key": "Come back on Monday for your next educational quiz about Pallas cats and conservation.",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 241
+        }
+      },
+      {
+        "comment": "",
+        "key": "Completing quizzes earns coins, XP, and helps you learn about these wonderful cats.",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 244
+        }
+      }
+    ]
+  },
+  "version": 1
+}

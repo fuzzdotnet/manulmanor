@@ -10,7 +10,7 @@ struct ContentView: View {
     private let backgroundColor = Color(red: 0.95, green: 0.95, blue: 0.97) // Very light gray with hint of purple
     
     enum Tab {
-        case home, inventory, quiz, shop, settings
+        case home, inventory, discover, shop, settings
     }
     
     var body: some View {
@@ -28,8 +28,8 @@ struct ContentView: View {
                             HomeView()
                         case .inventory:
                             InventoryView()
-                        case .quiz:
-                            QuizView()
+                        case .discover:
+                            DiscoverView()
                         case .shop:
                             ShopView()
                         case .settings:
@@ -103,7 +103,7 @@ struct CustomTabBar: View {
         [
             ("house.fill", "Home", .home),
             ("square.grid.2x2.fill", "Items", .inventory),
-            ("questionmark.circle.fill", "Quiz", .quiz),
+            ("book.fill", "Discover", .discover),
             ("bag.fill", "Shop", .shop),
             ("gearshape.fill", "Settings", .settings)
         ]

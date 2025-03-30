@@ -2,6 +2,7 @@ import SwiftUI
 
 struct QuizView: View {
     @EnvironmentObject var viewModel: ManulViewModel
+    @Environment(\.presentationMode) var presentationMode
     @State private var currentQuestionIndex = 0
     @State private var selectedAnswerIndex: Int? = nil
     @State private var isAnswerCorrect: Bool? = nil
@@ -10,11 +11,23 @@ struct QuizView: View {
     
     var body: some View {
         VStack {
-            // Header
-            Text("Manul Monday Quiz")
-                .font(.title)
-                .fontWeight(.bold)
-                .padding()
+            // Header with dismiss button
+            HStack {
+                Text("Manul Monday Quiz")
+                    .font(.title)
+                    .fontWeight(.bold)
+                
+                Spacer()
+                
+                Button(action: {
+                    presentationMode.wrappedValue.dismiss()
+                }) {
+                    Image(systemName: "xmark.circle.fill")
+                        .font(.title2)
+                        .foregroundColor(.gray)
+                }
+            }
+            .padding()
             
             if let quiz = viewModel.currentQuiz {
                 if quiz.isCompleted {

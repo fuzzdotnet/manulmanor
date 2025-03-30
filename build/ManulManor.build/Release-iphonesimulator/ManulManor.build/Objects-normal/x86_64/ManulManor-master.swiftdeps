@@ -1,0 +1,19 @@
+version: "Apple Swift version 6.0.3 (swiftlang-6.0.3.1.10 clang-1600.0.30.1)"
+options: "184ad7a6c07456f464da8b065f10693cb921858fa3ee7688166e700c3274e8da"
+build_start_time: [1743370321, 604691000]
+build_end_time: [1743370329, 254300000]
+inputs:
+  "/Users/danfletcher/Documents/Manul Manor/ManulManor/ManulManor/ContentView.swift": [1743370198, 683239833]
+  "/Users/danfletcher/Documents/Manul Manor/ManulManor/ManulManor/ManulManorApp.swift": [1743370135, 599353387]
+  "/Users/danfletcher/Documents/Manul Manor/ManulManor/ManulManor/Models/Item.swift": [1743369644, 386789004]
+  "/Users/danfletcher/Documents/Manul Manor/ManulManor/ManulManor/Models/Manul.swift": [1743369629, 845225081]
+  "/Users/danfletcher/Documents/Manul Manor/ManulManor/ManulManor/Models/Quiz.swift": [1743369658, 954501853]
+  "/Users/danfletcher/Documents/Manul Manor/ManulManor/ManulManor/ViewModels/ManulViewModel.swift": [1743369709, 764987443]
+  "/Users/danfletcher/Documents/Manul Manor/ManulManor/ManulManor/Views/HomeView.swift": [1743369752, 101375774]
+  "/Users/danfletcher/Documents/Manul Manor/ManulManor/ManulManor/Views/InventoryView.swift": [1743369778, 29470129]
+  "/Users/danfletcher/Documents/Manul Manor/ManulManor/ManulManor/Views/OnboardingView.swift": [1743369937, 54326756]
+  "/Users/danfletcher/Documents/Manul Manor/ManulManor/ManulManor/Views/QuizView.swift": [1743369813, 612767803]
+  "/Users/danfletcher/Documents/Manul Manor/ManulManor/ManulManor/Views/SettingsView.swift": [1743369911, 43297361]
+  "/Users/danfletcher/Documents/Manul Manor/ManulManor/ManulManor/Views/ShopView.swift": [1743369868, 570850315]
+  ? "/Users/danfletcher/Documents/Manul Manor/ManulManor/build/ManulManor.build/Release-iphonesimulator/ManulManor.build/DerivedSources/GeneratedAssetSymbols.swift"
+  : [1743370321, 542961199]

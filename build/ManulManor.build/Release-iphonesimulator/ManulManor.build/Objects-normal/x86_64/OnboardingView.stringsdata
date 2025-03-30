@@ -1,0 +1,72 @@
+{
+  "source": "/Users/danfletcher/Documents/Manul Manor/ManulManor/ManulManor/Views/OnboardingView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Skip",
+        "location": {
+          "startingColumn": 32,
+          "startingLine": 78
+        }
+      },
+      {
+        "comment": "",
+        "key": "Next",
+        "location": {
+          "startingColumn": 64,
+          "startingLine": 85
+        }
+      },
+      {
+        "comment": "",
+        "key": "Continue",
+        "location": {
+          "startingColumn": 73,
+          "startingLine": 85
+        }
+      },
+      {
+        "comment": "",
+        "key": "Name Your Manul",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 107
+        }
+      },
+      {
+        "comment": "",
+        "key": "Every Pallas cat needs a name. What will you call yours?",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 111
+        }
+      },
+      {
+        "comment": "",
+        "key": "Start Your Journey",
+        "location": {
+          "startingColumn": 32,
+          "startingLine": 140
+        }
+      },
+      {
+        "comment": "",
+        "key": "Please enter a valid name.",
+        "location": {
+          "startingColumn": 38,
+          "startingLine": 129
+        }
+      },
+      {
+        "comment": "",
+        "key": "Enter a name",
+        "location": {
+          "startingColumn": 39,
+          "startingLine": 119
+        }
+      }
+    ]
+  },
+  "version": 1
+}

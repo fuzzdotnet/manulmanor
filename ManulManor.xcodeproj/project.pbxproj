@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1A05C4422D9A06060022B6D2 /* DiscoverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A05C4412D9A06060022B6D2 /* DiscoverView.swift */; };
+		1A05C4442D9A06180022B6D2 /* ConservationDetailViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A05C4432D9A06180022B6D2 /* ConservationDetailViews.swift */; };
 		3A1234561234567800000001 /* ManulManorApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A1234561234567800000011 /* ManulManorApp.swift */; };
 		3A1234561234567800000002 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A1234561234567800000012 /* ContentView.swift */; };
 		3A1234561234567800000003 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3A1234561234567800000013 /* Assets.xcassets */; };
@@ -24,6 +26,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		1A05C4412D9A06060022B6D2 /* DiscoverView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiscoverView.swift; sourceTree = "<group>"; };
+		1A05C4432D9A06180022B6D2 /* ConservationDetailViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConservationDetailViews.swift; sourceTree = "<group>"; };
 		3A1234561234567800000000 /* ManulManor.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ManulManor.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3A1234561234567800000011 /* ManulManorApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManulManorApp.swift; sourceTree = "<group>"; };
 		3A1234561234567800000012 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -106,6 +110,8 @@
 		3A1234561234567800000206 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				1A05C4432D9A06180022B6D2 /* ConservationDetailViews.swift */,
+				1A05C4412D9A06060022B6D2 /* DiscoverView.swift */,
 				3A1234561234567800000041 /* HomeView.swift */,
 				3A1234561234567800000042 /* InventoryView.swift */,
 				3A1234561234567800000043 /* QuizView.swift */,
@@ -209,6 +215,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1A05C4442D9A06180022B6D2 /* ConservationDetailViews.swift in Sources */,
+				1A05C4422D9A06060022B6D2 /* DiscoverView.swift in Sources */,
 				3A1234561234567800000002 /* ContentView.swift in Sources */,
 				3A1234561234567800000001 /* ManulManorApp.swift in Sources */,
 				3A1234561234567800000005 /* Manul.swift in Sources */,
@@ -426,4 +434,4 @@
 /* End XCConfigurationList section */
 	};
 	rootObject = 3A1234561234567800000401 /* Project object */;
-} 
+}

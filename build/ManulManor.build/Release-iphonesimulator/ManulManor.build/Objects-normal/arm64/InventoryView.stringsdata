@@ -1,0 +1,16 @@
+{
+  "source": "/Users/danfletcher/Documents/Manul Manor/ManulManor/ManulManor/Views/InventoryView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Inventory",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 20
+        }
+      }
+    ]
+  },
+  "version": 1
+}
