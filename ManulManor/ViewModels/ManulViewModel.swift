@@ -100,9 +100,12 @@ class ManulViewModel: ObservableObject {
         var happinessIncrease = 0.05
         var feedbackQuality = "basic"
         let foodName = foodItem?.name ?? "Grasshoppers"
+        var usingGrasshoppers = true
         
         // Adjust stats based on food quality if a specific food is provided
         if let food = foodItem {
+            usingGrasshoppers = food.id == "food_grasshoppers"
+            
             switch food.id {
             case "food_grasshoppers":
                 // Base stats already set
@@ -129,6 +132,11 @@ class ManulViewModel: ObservableObject {
                 feedbackQuality = "super"
             default:
                 break
+            }
+            
+            // If not using grasshoppers, consume one unit of the food
+            if !usingGrasshoppers {
+                consumeItem(food)
             }
         }
         
@@ -243,16 +251,88 @@ class ManulViewModel: ObservableObject {
         var updatedItem = item
         updatedItem.isPurchased = true
         
-        if let index = inventory.firstIndex(where: { $0.id == item.id }) {
-            inventory[index] = updatedItem
+        // Handle different purchase logic for consumable vs. non-consumable items
+        if item.isConsumable {
+            // For consumable items, increase quantity
+            if let index = inventory.firstIndex(where: { $0.id == item.id }) {
+                // Item exists, increment quantity
+                inventory[index].quantity += 1
+            } else {
+                // New item, add with quantity 1
+                updatedItem.quantity = 1
+                inventory.append(updatedItem)
+            }
         } else {
-            inventory.append(updatedItem)
+            // For non-consumable items, just mark as purchased
+            if let index = inventory.firstIndex(where: { $0.id == item.id }) {
+                inventory[index] = updatedItem
+            } else {
+                inventory.append(updatedItem)
+            }
         }
         
         // Show feedback
-        showFeedback("Purchased \(item.name)!", interactionType: "purchase_success")
+        if item.isConsumable {
+            let quantityText = getItemQuantity(item.id) > 1 ? "\(getItemQuantity(item.id)) available" : ""
+            showFeedback("Purchased \(item.name)! \(quantityText)", interactionType: "purchase_success")
+        } else {
+            showFeedback("Purchased \(item.name)!", interactionType: "purchase_success")
+        }
         
         saveData()
+    }
+    
+    // Consume an item (reduce quantity by 1)
+    func consumeItem(_ item: Item) {
+        guard item.isConsumable else { return }
+        
+        if let index = inventory.firstIndex(where: { $0.id == item.id }) {
+            if inventory[index].quantity > 0 {
+                inventory[index].quantity -= 1
+            }
+        }
+        
+        saveData()
+    }
+    
+    // Add multiple units of a consumable item
+    func addItems(_ item: Item, quantity: Int) {
+        guard item.isConsumable else { return }
+        
+        if let index = inventory.firstIndex(where: { $0.id == item.id }) {
+            inventory[index].quantity += quantity
+        } else {
+            var newItem = item
+            newItem.isPurchased = true
+            newItem.quantity = quantity
+            inventory.append(newItem)
+        }
+        
+        saveData()
+    }
+    
+    // Get the quantity of a specific item
+    func getItemQuantity(_ itemId: String) -> Int {
+        if let item = inventory.first(where: { $0.id == itemId }) {
+            return item.quantity
+        }
+        return 0
+    }
+    
+    // Check if player can use a specific item
+    func canUseItem(_ item: Item) -> Bool {
+        // For non-consumable items, just check if purchased
+        if !item.isConsumable {
+            return inventory.contains(where: { $0.id == item.id && $0.isPurchased })
+        }
+        
+        // For consumable items, check quantity
+        // Special case for grasshoppers which are always available
+        if item.id == "food_grasshoppers" {
+            return true
+        }
+        
+        return getItemQuantity(item.id) > 0
     }
     
     func placeItem(_ item: Item, at position: CGPoint) {

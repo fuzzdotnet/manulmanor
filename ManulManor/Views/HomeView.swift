@@ -799,7 +799,7 @@ struct FoodSelectionView: View {
     var onSelectFood: (Item?) -> Void
     
     var availableFoods: [Item] {
-        viewModel.inventory.filter { $0.type == .food && $0.isPurchased }
+        viewModel.inventory.filter { $0.type == .food && $0.isPurchased && (viewModel.getItemQuantity($0.id) > 0 || $0.id == "food_grasshoppers") }
     }
     
     var body: some View {
@@ -827,9 +827,11 @@ struct FoodSelectionView: View {
                         
                         Spacer()
                         
-                        Text("FREE")
-                            .foregroundColor(.green)
-                            .fontWeight(.bold)
+                        Text("∞")
+                            .font(.system(size: 16, weight: .bold))
+                            .foregroundColor(.white)
+                            .padding(6)
+                            .background(Circle().fill(Color.green))
                     }
                     .padding(.vertical, 8)
                 }
@@ -853,6 +855,17 @@ struct FoodSelectionView: View {
                                 Text(food.description)
                                     .font(.caption)
                                     .foregroundColor(.gray)
+                            }
+                            
+                            Spacer()
+                            
+                            // Show quantity for consumable items
+                            if food.isConsumable && food.id != "food_grasshoppers" {
+                                Text("\(viewModel.getItemQuantity(food.id))")
+                                    .font(.system(size: 16, weight: .bold))
+                                    .foregroundColor(.white)
+                                    .padding(6)
+                                    .background(Circle().fill(foodColor(for: food.id)))
                             }
                         }
                         .padding(.vertical, 8)
