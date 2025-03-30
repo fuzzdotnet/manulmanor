@@ -5,9 +5,10 @@ struct InventoryView: View {
     @State private var selectedCategory: Item.ItemType = .food
     @State private var draggedItem: Item?
     @State private var isDragging = false
-    @State private var dragPosition = CGPoint(x: 0, y: 0)
+    @State private var dragPosition = CGPoint.zero // Use global coordinates for drag position
     @State private var foodForSheet: Item?
-    
+    @State private var habitatFrame: CGRect = .zero // Store the habitat frame
+
     // Get items filtered by category and owned status
     var filteredItems: [Item] {
         viewModel.inventory.filter { item in
@@ -25,122 +26,125 @@ struct InventoryView: View {
     }
     
     var body: some View {
-        VStack {
-            // Header
-            Text("Inventory")
-                .font(.title)
-                .fontWeight(.bold)
-                .padding()
-            
-            // Category selector
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 15) {
-                    ForEach(Item.ItemType.allCases, id: \.self) { category in
-                        CategoryButton(
-                            title: category.displayName,
-                            isSelected: category == selectedCategory,
-                            action: {
-                                selectedCategory = category
-                            }
-                        )
-                    }
-                }
-                .padding(.horizontal)
-            }
-            .padding(.bottom)
-            
-            // Placeable area - in a real implementation this would show the manul's habitat
-            ZStack {
-                RoundedRectangle(cornerRadius: 20)
-                    .fill(Color.gray.opacity(0.2))
-                    .frame(height: 300)
+        ZStack { // Use a ZStack to overlay the dragged item view
+            VStack {
+                // Header
+                Text("Inventory")
+                    .font(.title)
+                    .fontWeight(.bold)
+                    .padding()
                 
-                // Display placed items
-                ForEach(viewModel.placedItems.filter { $0.type == .furniture || $0.type == .decoration }) { item in
-                    if let position = item.position {
-                        ZStack {
-                            Circle()
-                                .fill(Color.white)
-                                .frame(width: 60, height: 60)
-                                .shadow(color: Color.black.opacity(0.2), radius: 3, x: 0, y: 2)
-                            
-                            Image(systemName: iconFor(item))
-                                .font(.system(size: 30))
-                                .foregroundColor(colorFor(item: item))
-                        }
-                        .position(position)
-                        .onTapGesture {
-                            viewModel.removeItem(item)
+                // Category selector
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 15) {
+                        ForEach(Item.ItemType.allCases, id: \.self) { category in
+                            CategoryButton(
+                                title: category.displayName,
+                                isSelected: category == selectedCategory,
+                                action: {
+                                    selectedCategory = category
+                                }
+                            )
                         }
                     }
+                    .padding(.horizontal)
                 }
+                .padding(.bottom)
                 
-                // Show the dragged item
-                if let item = draggedItem, isDragging {
+                // Placeable area using GeometryReader to get frame
+                GeometryReader { geometry in
                     ZStack {
-                        Circle()
-                            .fill(Color.white)
-                            .frame(width: 60, height: 60)
-                            .shadow(color: Color.black.opacity(0.2), radius: 3, x: 0, y: 2)
+                        RoundedRectangle(cornerRadius: 20)
+                            .fill(Color.gray.opacity(0.2))
+                            .frame(height: 300)
                         
-                        Image(systemName: iconFor(item))
-                            .font(.system(size: 30))
-                            .foregroundColor(colorFor(item: item))
+                        // Display placed items
+                        ForEach(viewModel.placedItems.filter { $0.type == .furniture || $0.type == .decoration }) { item in
+                            if let position = item.position {
+                                PlacedItemView(item: item) // Use a dedicated view for placed items
+                                    .position(position)
+                                    .onTapGesture {
+                                        viewModel.removeItem(item)
+                                    }
+                            }
+                        }
                     }
+                    .onAppear {
+                        // Store the habitat frame in global coordinates
+                        self.habitatFrame = geometry.frame(in: .global)
+                    }
+                    .onChange(of: geometry.frame(in: .global)) { newFrame in
+                         // Update frame if layout changes
+                        self.habitatFrame = newFrame
+                    }
+                }
+                .frame(height: 300) // Give GeometryReader a defined height
+                
+                Divider()
+                
+                // Inventory grid
+                ScrollView {
+                    LazyVGrid(columns: [
+                        GridItem(.flexible()),
+                        GridItem(.flexible()),
+                        GridItem(.flexible())
+                    ], spacing: 20) {
+                        ForEach(filteredItems) { item in
+                            ItemView(item: item, showQuantity: item.isConsumable)
+                                .gesture(
+                                    // Only allow dragging for placeable items
+                                    (item.type == .furniture || item.type == .decoration) ?
+                                    DragGesture(coordinateSpace: .global) // Use global coordinate space
+                                        .onChanged { value in
+                                            if !isDragging {
+                                                self.draggedItem = item // Set the item being dragged
+                                                self.isDragging = true
+                                            }
+                                            self.dragPosition = value.location // Update global drag position
+                                        }
+                                        .onEnded { value in
+                                            if let dragged = self.draggedItem {
+                                                // Check if dropped within the habitat frame
+                                                if habitatFrame.contains(value.location) {
+                                                    // Convert global drop location to local habitat coordinates
+                                                    let localPosition = CGPoint(
+                                                        x: value.location.x - habitatFrame.minX,
+                                                        y: value.location.y - habitatFrame.minY
+                                                    )
+                                                    viewModel.placeItem(dragged, at: localPosition)
+                                                }
+                                            }
+                                            // Reset drag state
+                                            self.draggedItem = nil
+                                            self.isDragging = false
+                                        }
+                                    : nil // No gesture for non-draggable items
+                                )
+                                .onTapGesture {
+                                     // Handle taps separately for non-draggable items
+                                    if item.type != .furniture && item.type != .decoration {
+                                        handleItemTap(item)
+                                    }
+                                }
+                        }
+                    }
+                    .padding()
+                }
+            }
+            .sheet(item: $foodForSheet) { food in
+                FeedConfirmationView(food: food) { confirmed in
+                    if confirmed {
+                        viewModel.feedManul(with: food)
+                    }
+                }
+            }
+            
+            // Show the dragged item overlay using global position
+            if let item = draggedItem, isDragging {
+                 PlacedItemView(item: item) // Use the same view as placed items
                     .position(dragPosition)
                     .opacity(0.7)
-                }
-            }
-            .gesture(
-                DragGesture()
-                    .onChanged { value in
-                        if !isDragging, let item = draggedItem {
-                            isDragging = true
-                        }
-                        
-                        if isDragging {
-                            dragPosition = value.location
-                        }
-                    }
-                    .onEnded { value in
-                        if let item = draggedItem {
-                            if item.type == .furniture || item.type == .decoration {
-                                viewModel.placeItem(item, at: value.location)
-                            } else if item.type == .hat || item.type == .accessory {
-                                // For wearable items, add to manul directly
-                                viewModel.wearItem(item)
-                            }
-                        }
-                        
-                        draggedItem = nil
-                        isDragging = false
-                    }
-            )
-            
-            Divider()
-            
-            // Inventory grid
-            ScrollView {
-                LazyVGrid(columns: [
-                    GridItem(.flexible()),
-                    GridItem(.flexible()),
-                    GridItem(.flexible())
-                ], spacing: 20) {
-                    ForEach(filteredItems) { item in
-                        ItemView(item: item, showQuantity: item.isConsumable)
-                            .onTapGesture {
-                                handleItemTap(item)
-                            }
-                    }
-                }
-                .padding()
-            }
-        }
-        .sheet(item: $foodForSheet) { food in
-            FeedConfirmationView(food: food) { confirmed in
-                if confirmed {
-                    viewModel.feedManul(with: food)
-                }
+                    .allowsHitTesting(false) // Prevent the overlay from blocking gestures
             }
         }
     }
@@ -154,9 +158,6 @@ struct InventoryView: View {
                 // Show feedback that item is out of stock
                 viewModel.showFeedback("No \(item.name) left in inventory!", interactionType: "info")
             }
-        } else if item.type == .furniture || item.type == .decoration {
-            // For furniture or decorations, start dragging
-            startDragging(item)
         } else if item.type == .hat || item.type == .accessory {
             // For wearable items, toggle wearing
             if viewModel.manul.wearingItems.contains(item.id) {
@@ -166,10 +167,23 @@ struct InventoryView: View {
             }
         }
     }
+}
+
+// A simple view for displaying placed/dragged items consistently
+struct PlacedItemView: View {
+    let item: Item
     
-    private func startDragging(_ item: Item) {
-        self.draggedItem = item
-        self.dragPosition = CGPoint(x: UIScreen.main.bounds.width / 2, y: 300)
+    var body: some View {
+        ZStack {
+            Circle()
+                .fill(Color.white)
+                .frame(width: 60, height: 60)
+                .shadow(color: Color.black.opacity(0.2), radius: 3, x: 0, y: 2)
+            
+            Image(systemName: iconFor(item))
+                .font(.system(size: 30))
+                .foregroundColor(colorFor(item: item))
+        }
     }
 }
 
