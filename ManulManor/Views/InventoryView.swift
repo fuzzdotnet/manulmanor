@@ -51,6 +51,13 @@ struct InventoryView: View {
                                 isSelected: category == selectedCategory,
                                 action: {
                                     selectedCategory = category
+                                    
+                                    // Reset trash frame and drag state when switching to non-placeable categories
+                                    if category != .furniture && category != .decoration {
+                                        trashFrame = .zero
+                                        isDragging = false
+                                        draggedItem = nil
+                                    }
                                 }
                             )
                         }
@@ -221,19 +228,23 @@ struct InventoryView: View {
                 Spacer() // Pushes trash to the bottom
                 HStack {
                     Spacer() // Pushes trash to the right
-                    GeometryReader { geo in
-                        Image(systemName: "trash")
-                            .font(.system(size: 30))
-                            .foregroundColor(isOverTrash ? .red : .gray)
-                            .padding(20)
-                            .background(isOverTrash ? Color.red.opacity(0.2) : Color.gray.opacity(0.1))
-                            .clipShape(Circle())
-                            .onAppear { trashFrame = geo.frame(in: .global) }
-                            .onChange(of: geo.frame(in: .global)) { trashFrame = $0 }
+                    
+                    // Only show trash when viewing furniture or decorations
+                    if selectedCategory == .furniture || selectedCategory == .decoration {
+                        GeometryReader { geo in
+                            Image(systemName: "trash")
+                                .font(.system(size: 30))
+                                .foregroundColor(isOverTrash ? .red : .gray)
+                                .padding(20)
+                                .background(isOverTrash ? Color.red.opacity(0.2) : Color.gray.opacity(0.1))
+                                .clipShape(Circle())
+                                .onAppear { trashFrame = geo.frame(in: .global) }
+                                .onChange(of: geo.frame(in: .global)) { trashFrame = $0 }
+                        }
+                        .frame(width: 80, height: 80) // Fixed frame for the trash geo reader
+                        .padding(.bottom, 30)
+                        .padding(.trailing, 30)
                     }
-                    .frame(width: 80, height: 80) // Fixed frame for the trash geo reader
-                    .padding(.bottom, 30)
-                    .padding(.trailing, 30)
                 }
             }
             .allowsHitTesting(false) // Allow gestures to pass through VStack container
