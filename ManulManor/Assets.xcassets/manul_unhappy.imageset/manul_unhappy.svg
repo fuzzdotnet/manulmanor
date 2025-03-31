@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="512px" height="512px" viewBox="0 0 512 512" version="1.1" xmlns="http://www.w3.org/2000/svg">
+    <g id="Manul-Unhappy" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <!-- Ears (very drooped) -->
+        <path d="M120,150 L140,110 L160,150 Z" fill="#7A6A59" />
+        <path d="M352,150 L372,110 L392,150 Z" fill="#7A6A59" />
+
+        <!-- Head (more gray-toned due to unhappiness) -->
+        <circle cx="256" cy="256" r="150" fill="#A29280" />
+        <circle cx="256" cy="256" r="140" fill="#AD9F8F" />
+
+        <!-- Fur texture -->
+        <circle cx="256" cy="256" r="135" fill="#BAA99A" opacity="0.5" />
+
+        <!-- Eyes (more closed/angry) -->
+        <ellipse cx="196" cy="226" rx="25" ry="20" fill="#FFFFFF" />
+        <ellipse cx="316" cy="226" rx="25" ry="20" fill="#FFFFFF" />
+        
+        <!-- Pupils (smaller, looking down) -->
+        <circle cx="196" cy="231" r="10" fill="#000000" />
+        <circle cx="316" cy="231" r="10" fill="#000000" />
+        
+        <!-- Angry eyebrows -->
+        <path d="M176,196 L216,206" stroke="#7A6A59" stroke-width="6" />
+        <path d="M336,196 L296,206" stroke="#7A6A59" stroke-width="6" />
+        
+        <!-- Nose -->
+        <path d="M246,276 L256,286 L266,276 L256,266 Z" fill="#EB9393" />
+        
+        <!-- Cheeks -->
+        <circle cx="186" cy="276" r="20" fill="#C9BBB0" opacity="0.8" />
+        <circle cx="326" cy="276" r="20" fill="#C9BBB0" opacity="0.8" />
+        
+        <!-- Mouth (very unhappy) -->
+        <path d="M216,316 Q256,286 296,316" stroke="#424242" stroke-width="3" fill="none" />
+        
+        <!-- Whiskers (very drooped) -->
+        <line x1="226" y1="266" x2="176" y2="266" stroke="#FFFFFF" stroke-width="2" />
+        <line x1="226" y1="276" x2="166" y2="286" stroke="#FFFFFF" stroke-width="2" />
+        <line x1="226" y1="286" x2="176" y2="306" stroke="#FFFFFF" stroke-width="2" />
+        
+        <line x1="286" y1="266" x2="336" y2="266" stroke="#FFFFFF" stroke-width="2" />
+        <line x1="286" y1="276" x2="346" y2="286" stroke="#FFFFFF" stroke-width="2" />
+        <line x1="286" y1="286" x2="336" y2="306" stroke="#FFFFFF" stroke-width="2" />
+    </g>
+</svg> 

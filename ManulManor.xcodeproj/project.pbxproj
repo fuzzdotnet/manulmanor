@@ -9,6 +9,17 @@
 /* Begin PBXBuildFile section */
 		1A05C4422D9A06060022B6D2 /* DiscoverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A05C4412D9A06060022B6D2 /* DiscoverView.swift */; };
 		1A05C4442D9A06180022B6D2 /* ConservationDetailViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A05C4432D9A06180022B6D2 /* ConservationDetailViews.swift */; };
+		1A05C44E2D9A09450022B6D2 /* CategoryButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A05C4462D9A09450022B6D2 /* CategoryButton.swift */; };
+		1A05C44F2D9A09450022B6D2 /* ImprovedActionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A05C4472D9A09450022B6D2 /* ImprovedActionButton.swift */; };
+		1A05C4502D9A09450022B6D2 /* FeedbackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A05C4452D9A09450022B6D2 /* FeedbackView.swift */; };
+		1A05C4512D9A09450022B6D2 /* ItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A05C4482D9A09450022B6D2 /* ItemView.swift */; };
+		1A05C4522D9A09450022B6D2 /* StatIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A05C44B2D9A09450022B6D2 /* StatIndicator.swift */; };
+		1A05C4532D9A09450022B6D2 /* ManulView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A05C4492D9A09450022B6D2 /* ManulView.swift */; };
+		1A05C4542D9A09450022B6D2 /* Triangle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A05C44C2D9A09450022B6D2 /* Triangle.swift */; };
+		1A05C4552D9A09450022B6D2 /* ShopItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A05C44A2D9A09450022B6D2 /* ShopItemView.swift */; };
+		1A05C4572D9A09960022B6D2 /* ViewHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A05C4562D9A09960022B6D2 /* ViewHelpers.swift */; };
+		1A05C45B2D9A273A0022B6D2 /* SVGImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A05C4592D9A273A0022B6D2 /* SVGImageView.swift */; };
+		1A05C46E2D9A29390022B6D2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1A05C46D2D9A29390022B6D2 /* Assets.xcassets */; };
 		3A1234561234567800000001 /* ManulManorApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A1234561234567800000011 /* ManulManorApp.swift */; };
 		3A1234561234567800000002 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A1234561234567800000012 /* ContentView.swift */; };
 		3A1234561234567800000003 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3A1234561234567800000013 /* Assets.xcassets */; };
@@ -28,6 +39,17 @@
 /* Begin PBXFileReference section */
 		1A05C4412D9A06060022B6D2 /* DiscoverView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiscoverView.swift; sourceTree = "<group>"; };
 		1A05C4432D9A06180022B6D2 /* ConservationDetailViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConservationDetailViews.swift; sourceTree = "<group>"; };
+		1A05C4452D9A09450022B6D2 /* FeedbackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbackView.swift; sourceTree = "<group>"; };
+		1A05C4462D9A09450022B6D2 /* CategoryButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryButton.swift; sourceTree = "<group>"; };
+		1A05C4472D9A09450022B6D2 /* ImprovedActionButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImprovedActionButton.swift; sourceTree = "<group>"; };
+		1A05C4482D9A09450022B6D2 /* ItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemView.swift; sourceTree = "<group>"; };
+		1A05C4492D9A09450022B6D2 /* ManulView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManulView.swift; sourceTree = "<group>"; };
+		1A05C44A2D9A09450022B6D2 /* ShopItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShopItemView.swift; sourceTree = "<group>"; };
+		1A05C44B2D9A09450022B6D2 /* StatIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatIndicator.swift; sourceTree = "<group>"; };
+		1A05C44C2D9A09450022B6D2 /* Triangle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Triangle.swift; sourceTree = "<group>"; };
+		1A05C4562D9A09960022B6D2 /* ViewHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewHelpers.swift; sourceTree = "<group>"; };
+		1A05C4592D9A273A0022B6D2 /* SVGImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SVGImageView.swift; sourceTree = "<group>"; };
+		1A05C46D2D9A29390022B6D2 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		3A1234561234567800000000 /* ManulManor.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ManulManor.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3A1234561234567800000011 /* ManulManorApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManulManorApp.swift; sourceTree = "<group>"; };
 		3A1234561234567800000012 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -57,6 +79,20 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		1A05C44D2D9A09450022B6D2 /* SharedComponents */ = {
+			isa = PBXGroup;
+			children = (
+				1A05C4462D9A09450022B6D2 /* CategoryButton.swift */,
+				1A05C4472D9A09450022B6D2 /* ImprovedActionButton.swift */,
+				1A05C4482D9A09450022B6D2 /* ItemView.swift */,
+				1A05C4492D9A09450022B6D2 /* ManulView.swift */,
+				1A05C44A2D9A09450022B6D2 /* ShopItemView.swift */,
+				1A05C44B2D9A09450022B6D2 /* StatIndicator.swift */,
+				1A05C44C2D9A09450022B6D2 /* Triangle.swift */,
+			);
+			path = SharedComponents;
+			sourceTree = "<group>";
+		};
 		3A1234561234567800000201 = {
 			isa = PBXGroup;
 			children = (
@@ -69,6 +105,7 @@
 		3A1234561234567800000202 /* ManulManor */ = {
 			isa = PBXGroup;
 			children = (
+				1A05C46D2D9A29390022B6D2 /* Assets.xcassets */,
 				3A1234561234567800000011 /* ManulManorApp.swift */,
 				3A1234561234567800000012 /* ContentView.swift */,
 				3A1234561234567800000204 /* Models */,
@@ -110,6 +147,9 @@
 		3A1234561234567800000206 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				1A05C4592D9A273A0022B6D2 /* SVGImageView.swift */,
+				1A05C4452D9A09450022B6D2 /* FeedbackView.swift */,
+				1A05C44D2D9A09450022B6D2 /* SharedComponents */,
 				1A05C4432D9A06180022B6D2 /* ConservationDetailViews.swift */,
 				1A05C4412D9A06060022B6D2 /* DiscoverView.swift */,
 				3A1234561234567800000041 /* HomeView.swift */,
@@ -125,6 +165,7 @@
 		3A1234561234567800000207 /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
+				1A05C4562D9A09960022B6D2 /* ViewHelpers.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -204,6 +245,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3A1234561234567800000004 /* Preview Assets.xcassets in Resources */,
+				1A05C46E2D9A29390022B6D2 /* Assets.xcassets in Resources */,
 				3A1234561234567800000003 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -222,6 +264,16 @@
 				3A1234561234567800000005 /* Manul.swift in Sources */,
 				3A1234561234567800000006 /* Item.swift in Sources */,
 				3A1234561234567800000007 /* Quiz.swift in Sources */,
+				1A05C44E2D9A09450022B6D2 /* CategoryButton.swift in Sources */,
+				1A05C44F2D9A09450022B6D2 /* ImprovedActionButton.swift in Sources */,
+				1A05C4572D9A09960022B6D2 /* ViewHelpers.swift in Sources */,
+				1A05C4502D9A09450022B6D2 /* FeedbackView.swift in Sources */,
+				1A05C45B2D9A273A0022B6D2 /* SVGImageView.swift in Sources */,
+				1A05C4512D9A09450022B6D2 /* ItemView.swift in Sources */,
+				1A05C4522D9A09450022B6D2 /* StatIndicator.swift in Sources */,
+				1A05C4532D9A09450022B6D2 /* ManulView.swift in Sources */,
+				1A05C4542D9A09450022B6D2 /* Triangle.swift in Sources */,
+				1A05C4552D9A09450022B6D2 /* ShopItemView.swift in Sources */,
 				3A1234561234567800000008 /* ManulViewModel.swift in Sources */,
 				3A1234561234567800000009 /* HomeView.swift in Sources */,
 				3A1234561234567800000010 /* InventoryView.swift in Sources */,

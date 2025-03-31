@@ -67,8 +67,7 @@ struct InventoryView: View {
                             .frame(height: 300)
                         
                         // Add Manul view centered in the habitat
-                        ManulView(mood: viewModel.manul.mood)
-                            .frame(width: 40, height: 40) // Make much smaller
+                        ManulView(mood: viewModel.manul.mood, scaleFactor: 0.22)
                             .allowsHitTesting(false)
                         
                         // Display placed items

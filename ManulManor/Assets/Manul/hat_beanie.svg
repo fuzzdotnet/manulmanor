@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="512px" height="256px" viewBox="0 0 512 256" version="1.1" xmlns="http://www.w3.org/2000/svg">
+    <g id="Hat-Beanie" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <!-- Main beanie -->
+        <ellipse cx="256" cy="200" rx="120" ry="56" fill="#C93636" />
+        <ellipse cx="256" cy="180" rx="120" ry="40" fill="#E74C3C" />
+        
+        <!-- Bottom rim -->
+        <path d="M136,200 C136,230.92 189.72,256 256,256 C322.28,256 376,230.92 376,200 L376,184 C376,214.92 322.28,240 256,240 C189.72,240 136,214.92 136,184 L136,200 Z" fill="#9C2A2A" />
+        
+        <!-- Fold pattern -->
+        <ellipse cx="256" cy="160" rx="120" ry="38" fill="#F15A4C" />
+        <path d="M256,160 C189.72,160 136,178.36 136,200 C136,178.36 189.72,160 256,160 C322.28,160 376,178.36 376,200 C376,178.36 322.28,160 256,160 Z" fill="#C93636" opacity="0.5" />
+        
+        <!-- Pom-pom -->
+        <circle cx="256" cy="40" r="30" fill="#FFFFFF" />
+        <circle cx="256" cy="40" r="25" fill="#F8F8F8" />
+        <circle cx="246" cy="30" r="8" fill="#FFFFFF" />
+    </g>
+</svg> 

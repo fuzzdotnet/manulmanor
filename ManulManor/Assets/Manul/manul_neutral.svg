@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="512px" height="512px" viewBox="0 0 512 512" version="1.1" xmlns="http://www.w3.org/2000/svg">
+    <g id="Manul-Neutral" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <!-- Ears -->
+        <path d="M100,150 L140,90 L180,150 Z" fill="#7A6A59" />
+        <path d="M332,150 L372,90 L412,150 Z" fill="#7A6A59" />
+
+        <!-- Head -->
+        <circle cx="256" cy="256" r="150" fill="#A89683" />
+        <circle cx="256" cy="256" r="140" fill="#B5A394" />
+
+        <!-- Fur texture -->
+        <circle cx="256" cy="256" r="135" fill="#C2B1A2" opacity="0.5" />
+
+        <!-- Eyes -->
+        <circle cx="196" cy="226" r="25" fill="#FFFFFF" />
+        <circle cx="316" cy="226" r="25" fill="#FFFFFF" />
+        
+        <!-- Pupils -->
+        <circle cx="196" cy="226" r="12" fill="#000000" />
+        <circle cx="316" cy="226" r="12" fill="#000000" />
+        
+        <!-- Highlight in eyes -->
+        <circle cx="192" cy="222" r="5" fill="#FFFFFF" />
+        <circle cx="312" cy="222" r="5" fill="#FFFFFF" />
+        
+        <!-- Nose -->
+        <path d="M246,276 L256,286 L266,276 L256,266 Z" fill="#FCA1A1" />
+        
+        <!-- Cheeks -->
+        <circle cx="186" cy="276" r="20" fill="#D3C2B3" opacity="0.8" />
+        <circle cx="326" cy="276" r="20" fill="#D3C2B3" opacity="0.8" />
+        
+        <!-- Mouth (neutral) -->
+        <line x1="226" y1="296" x2="286" y2="296" stroke="#424242" stroke-width="3" />
+        
+        <!-- Whiskers -->
+        <line x1="226" y1="266" x2="176" y2="256" stroke="#FFFFFF" stroke-width="2" />
+        <line x1="226" y1="276" x2="166" y2="276" stroke="#FFFFFF" stroke-width="2" />
+        <line x1="226" y1="286" x2="176" y2="296" stroke="#FFFFFF" stroke-width="2" />
+        
+        <line x1="286" y1="266" x2="336" y2="256" stroke="#FFFFFF" stroke-width="2" />
+        <line x1="286" y1="276" x2="346" y2="276" stroke="#FFFFFF" stroke-width="2" />
+        <line x1="286" y1="286" x2="336" y2="296" stroke="#FFFFFF" stroke-width="2" />
+    </g>
+</svg> 

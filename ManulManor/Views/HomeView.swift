@@ -161,8 +161,7 @@ struct HomeView: View {
                             .overlay {
                                 ZStack {
                                     // Manul view with reduced size and wearables
-                                    ManulView(mood: viewModel.manul.mood, wearingItems: viewModel.manul.wearingItems)
-                                        .frame(width: 40, height: 40) // Reduced size further
+                                    ManulView(mood: viewModel.manul.mood, wearingItems: viewModel.manul.wearingItems, scaleFactor: 0.22)
                                         .offset(x: habitatOffset)
                                         .gesture(
                                             DragGesture()
