@@ -141,8 +141,8 @@ struct HomeView: View {
                     .offset(y: 30)
                     
                     // Manul character
-                    ManulView(mood: viewModel.manul.mood, wearingItems: viewModel.manul.wearingItems, scaleFactor: 0.3)
-                        .offset(x: habitatOffset, y: -15)
+                    ManulView(mood: viewModel.manul.mood, wearingItems: viewModel.manul.wearingItems, scaleFactor: 0.6)
+                        .offset(x: habitatOffset, y: -30)
                         .gesture(
                             DragGesture()
                                 .onChanged { value in
