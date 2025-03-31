@@ -154,7 +154,6 @@ struct HomeView: View {
                         // Habitat background
                         RoundedRectangle(cornerRadius: 30)
                             .fill(primaryColor.opacity(0.5))
-                            // Removed explicit frame height, rely on ZStack content + padding
                             .overlay(
                                 RoundedRectangle(cornerRadius: 30)
                                     .stroke(accentColor.opacity(0.2), lineWidth: 1)
@@ -162,7 +161,7 @@ struct HomeView: View {
                         
                         // Manul view with reduced size
                         ManulView(mood: viewModel.manul.mood)
-                            .frame(width: 60, height: 60) // Reduced size further
+                            .frame(width: 40, height: 40) // Reduced size further
                             .offset(x: habitatOffset)
                             .gesture(
                                 DragGesture()
@@ -180,15 +179,12 @@ struct HomeView: View {
                             )
                             .scaleEffect(isHabitatDragging ? 0.95 : 1.0)
                             .animation(.spring(response: 0.3), value: isHabitatDragging)
-                            // Add some padding below the manul
-                            .padding(.bottom, 20)
                         
                         // Placed decorations
                         ForEach(viewModel.placedItems) { item in
                             if let position = item.position {
                                 PlacedItemView(item: item)
                                     .position(position)
-                                    // Removed redundant shadow
                             }
                         }
                         
@@ -198,10 +194,10 @@ struct HomeView: View {
                                 .position(x: geometry.size.width / 2, y: geometry.size.height * 0.25) 
                         }
                     }
-                    // Apply frame to the ZStack instead of just the background
-                    // Use a fixed height for consistency, adjust padding
-                    .frame(height: 300) 
-                    .padding(.horizontal, 16) // Maintain horizontal padding
+                    // Apply frame with fixed height and center within the screen
+                    .frame(height: 300)
+                    .frame(maxWidth: .infinity) // Ensure it takes full width
+                    .padding(.horizontal, 16)
                     
                     // Manul name and mood with improved visuals
                     VStack(spacing: 4) {

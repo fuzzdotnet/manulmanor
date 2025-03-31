@@ -60,6 +60,11 @@ struct InventoryView: View {
                             .fill(Color.gray.opacity(0.2))
                             .frame(height: 300)
                         
+                        // Add Manul view centered in the habitat
+                        ManulView(mood: viewModel.manul.mood)
+                            .frame(width: 40, height: 40) // Make much smaller
+                            .allowsHitTesting(false)
+                        
                         // Display placed items
                         ForEach(viewModel.placedItems.filter { $0.type == .furniture || $0.type == .decoration }) { item in
                             if let position = item.position {
@@ -116,11 +121,6 @@ struct InventoryView: View {
                          // Update frame if layout changes
                         self.habitatFrame = newFrame
                     }
-                    
-                    // Add Manul view inside the habitat ZStack
-                    ManulView(mood: viewModel.manul.mood) // Use the view model's manul
-                        .frame(width: 60, height: 60) // Reduced size further
-                        .allowsHitTesting(false) // Don't let it interfere with drag/drop
                 }
                 .frame(height: 300) // Give GeometryReader a defined height
                 
