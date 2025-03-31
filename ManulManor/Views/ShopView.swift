@@ -103,32 +103,27 @@ struct ShopView: View {
     func purchaseItem(_ item: Item) {
         // Grasshoppers are always free and available
         if item.id == "food_grasshoppers" {
-            // Just show a message that they're already available
-            // We don't need this since they're always in inventory, but just in case
             viewModel.showFeedback("Grasshoppers are always available for free!", interactionType: "info")
             return
         }
-        
-        // Check if player has enough coins and item is not locked by level
-        guard viewModel.manul.coins >= item.price && item.unlockLevel <= viewModel.manul.level else {
-            // Optionally provide feedback why purchase failed (e.g., insufficient funds, level lock)
-            if viewModel.manul.coins < item.price {
-                 viewModel.showFeedback("Not enough coins!", interactionType: "error")
-            } else if item.unlockLevel > viewModel.manul.level {
-                 viewModel.showFeedback("Requires Level \(item.unlockLevel)!", interactionType: "error")
-            }
-            return
-        }
-        
-        // Check if item is already purchased (only for non-consumables)
-        if !item.isConsumable {
-            guard !viewModel.inventory.contains(where: { $0.id == item.id && $0.isPurchased }) else {
-                // Feedback for trying to buy already owned unique item
-                viewModel.showFeedback("You already own this item!", interactionType: "info")
-                return
-            }
-        }
-        
+
+        // Remove redundant checks - ViewModel now handles all validation
+        // guard viewModel.manul.coins >= item.price && item.unlockLevel <= viewModel.manul.level else {
+        //     if viewModel.manul.coins < item.price {
+        //          viewModel.showFeedback("Not enough coins!", interactionType: "error")
+        //     } else if item.unlockLevel > viewModel.manul.level {
+        //          viewModel.showFeedback("Requires Level \(item.unlockLevel)!", interactionType: "error")
+        //     }
+        //     return
+        // }
+        //
+        // if !item.isConsumable {
+        //     guard !viewModel.inventory.contains(where: { $0.id == item.id && $0.isPurchased }) else {
+        //         viewModel.showFeedback("You already own this item!", interactionType: "info")
+        //         return
+        //     }
+        // }
+
         // Attempt to purchase the item via the ViewModel
         viewModel.purchaseItem(item)
     }

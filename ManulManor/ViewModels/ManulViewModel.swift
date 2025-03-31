@@ -32,47 +32,47 @@ class ManulViewModel: ObservableObject {
     
     // Initialize with default values
     init() {
-        if let savedManul = UserDefaults.standard.data(forKey: manulKey),
-           let decodedManul = try? JSONDecoder().decode(Manul.self, from: savedManul) {
-            self.manul = decodedManul
-        } else {
-            // First time user - will trigger onboarding
-            self.manul = Manul.newManul(name: "")
+        // Load data using helper function
+        let defaultManul = Manul.newManul(name: "")
+        self.manul = ManulViewModel.loadData(forKey: manulKey, defaultValue: defaultManul)
+        self.inventory = ManulViewModel.loadData(forKey: inventoryKey, defaultValue: Item.sampleItems.filter { $0.isPurchased })
+        self.placedItems = ManulViewModel.loadData(forKey: placedItemsKey, defaultValue: [])
+
+        // Check for onboarding condition
+        if self.manul.id == defaultManul.id && self.manul.name.isEmpty { // Check if it's the default one
             self.isOnboarding = true
         }
-        
-        if let savedInventory = UserDefaults.standard.data(forKey: inventoryKey),
-           let decodedInventory = try? JSONDecoder().decode([Item].self, from: savedInventory) {
-            self.inventory = decodedInventory
-        } else {
-            // Start with default inventory
-            self.inventory = Item.sampleItems.filter { $0.isPurchased }
-        }
-        
-        if let savedPlacedItems = UserDefaults.standard.data(forKey: placedItemsKey),
-           let decodedPlacedItems = try? JSONDecoder().decode([Item].self, from: savedPlacedItems) {
-            self.placedItems = decodedPlacedItems
-        } else {
-            self.placedItems = []
-        }
-        
-        if let savedQuiz = UserDefaults.standard.data(forKey: quizKey),
-           let decodedQuiz = try? JSONDecoder().decode(Quiz.self, from: savedQuiz) {
-            self.currentQuiz = decodedQuiz
-        } else {
-            // Check if it's Monday to create a new quiz
+
+        // Load quiz data (specific logic for default value)
+        self.currentQuiz = {
+            guard let data = UserDefaults.standard.data(forKey: quizKey) else { return nil }
+            return try? JSONDecoder().decode(Quiz.self, from: data)
+        }()
+
+        // If no saved quiz, check if we need to create a new one (e.g., on Mondays)
+        if self.currentQuiz == nil {
             let calendar = Calendar.current
             let weekday = calendar.component(.weekday, from: Date())
             if weekday == 2 { // Monday is 2 in Calendar.Component.weekday
                 self.currentQuiz = Quiz.generateWeeklyQuiz()
+                // Note: Consider if saving is needed immediately after generating a new quiz
             }
         }
-        
+
         // Start timers
         startTimers()
-        
-        // Check if we need to generate a new quiz (on Mondays)
-        checkForWeeklyQuiz()
+    }
+    
+    // MARK: - Data Loading Helper
+    
+    private static func loadData<T: Decodable>(forKey key: String, defaultValue: @autoclosure () -> T) -> T {
+        guard let data = UserDefaults.standard.data(forKey: key),
+              let decodedValue = try? JSONDecoder().decode(T.self, from: data) else {
+            // Log decoding errors or missing data if needed
+            // print("Could not load or decode data for key \(key). Using default value.")
+            return defaultValue()
+        }
+        return decodedValue
     }
     
     // MARK: - Timer Functions
@@ -239,11 +239,26 @@ class ManulViewModel: ObservableObject {
     // MARK: - Inventory Functions
     
     func purchaseItem(_ item: Item) {
-        guard manul.coins >= item.price else { 
-            showFeedback("Not enough coins to buy \(item.name)", interactionType: "purchase_failed")
-            return 
+        // 1. Check if already owned (for non-consumables)
+        if !item.isConsumable && inventory.contains(where: { $0.id == item.id && $0.isPurchased }) {
+            showFeedback("You already own \(item.name)", interactionType: "info")
+            return
         }
-        
+
+        // 2. Check level requirement
+        guard item.unlockLevel <= manul.level else {
+            showFeedback("\(item.name) requires Level \(item.unlockLevel)", interactionType: "purchase_failed")
+            return
+        }
+
+        // 3. Check sufficient coins (already existing check)
+        guard manul.coins >= item.price else {
+            showFeedback("Not enough coins to buy \(item.name)", interactionType: "purchase_failed")
+            return
+        }
+
+        // ---- Purchase logic proceeds if checks pass ----
+
         // Deduct coins
         manul.coins -= item.price
         
