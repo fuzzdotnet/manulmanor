@@ -114,41 +114,64 @@ struct HomeView: View {
                     .padding(.horizontal, 16)
                     .padding(.top, 12)
                     
-                    // Stats panel - now controlled by isStatsExpanded
-                    if isStatsExpanded {
-                        // Stats indicators with improved layout and visuals
-                        HStack(spacing: 12) {
-                            // Happiness stat
-                            StatCard(
-                                icon: "heart.fill",
-                                iconColor: .red,
-                                label: "Happiness",
-                                value: viewModel.manul.happiness,
-                                color: .red
-                            )
-                            
-                            // Hunger stat
-                            StatCard(
-                                icon: "fork.knife",
-                                iconColor: .orange,
-                                label: "Hunger",
-                                value: viewModel.manul.hunger,
-                                color: .orange
-                            )
-                            
-                            // Hygiene stat
-                            StatCard(
-                                icon: "sparkles",
-                                iconColor: .blue,
-                                label: "Hygiene",
-                                value: viewModel.manul.hygiene,
-                                color: .blue
-                            )
+                    // Fixed-size stats container area
+                    ZStack(alignment: .top) {
+                        // Transparent placeholder to reserve space
+                        Color.clear
+                            .frame(height: isStatsExpanded ? 100 : 10)
+                        
+                        // Stats panel - now appears in overlay without pushing content
+                        if isStatsExpanded {
+                            // Stats indicators with improved layout and visuals
+                            HStack(spacing: 12) {
+                                // Happiness stat
+                                StatCard(
+                                    icon: "heart.fill",
+                                    iconColor: .red,
+                                    label: "Happiness",
+                                    value: viewModel.manul.happiness,
+                                    color: .red
+                                )
+                                
+                                // Hunger stat
+                                StatCard(
+                                    icon: "fork.knife",
+                                    iconColor: .orange,
+                                    label: "Hunger",
+                                    value: viewModel.manul.hunger,
+                                    color: .orange
+                                )
+                                
+                                // Hygiene stat
+                                StatCard(
+                                    icon: "sparkles",
+                                    iconColor: .blue,
+                                    label: "Hygiene",
+                                    value: viewModel.manul.hygiene,
+                                    color: .blue
+                                )
+                            }
+                            .padding(.horizontal, 16)
+                            .padding(.top, 8)
+                            .transition(.opacity.combined(with: .move(edge: .top)))
                         }
-                        .padding(.horizontal, 16)
-                        .padding(.top, 8)
-                        .padding(.bottom, 4)
-                        .transition(.move(edge: .top).combined(with: .opacity))
+                    }
+                    
+                    // Stats visual separator - subtle curved background
+                    if isStatsExpanded {
+                        Path { path in
+                            path.move(to: CGPoint(x: 0, y: 0))
+                            path.addQuadCurve(
+                                to: CGPoint(x: geometry.size.width, y: 0),
+                                control: CGPoint(x: geometry.size.width/2, y: 30)
+                            )
+                            path.addLine(to: CGPoint(x: geometry.size.width, y: 60))
+                            path.addLine(to: CGPoint(x: 0, y: 60))
+                            path.closeSubpath()
+                        }
+                        .fill(Color.white.opacity(0.1))
+                        .frame(height: 60)
+                        .offset(y: -40)
                     }
                     
                     // Feedback message toast
