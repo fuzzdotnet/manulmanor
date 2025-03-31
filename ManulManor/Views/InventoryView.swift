@@ -119,7 +119,7 @@ struct InventoryView: View {
                     
                     // Add Manul view inside the habitat ZStack
                     ManulView(mood: viewModel.manul.mood) // Use the view model's manul
-                        .frame(width: 75, height: 75) // Reduced size
+                        .frame(width: 60, height: 60) // Reduced size further
                         .allowsHitTesting(false) // Don't let it interfere with drag/drop
                 }
                 .frame(height: 300) // Give GeometryReader a defined height

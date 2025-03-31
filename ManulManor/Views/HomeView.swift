@@ -162,7 +162,7 @@ struct HomeView: View {
                         
                         // Manul view with reduced size
                         ManulView(mood: viewModel.manul.mood)
-                            .frame(width: 75, height: 75) // Reduced size
+                            .frame(width: 60, height: 60) // Reduced size further
                             .offset(x: habitatOffset)
                             .gesture(
                                 DragGesture()
@@ -202,7 +202,6 @@ struct HomeView: View {
                     // Use a fixed height for consistency, adjust padding
                     .frame(height: 300) 
                     .padding(.horizontal, 16) // Maintain horizontal padding
-                    .padding(.vertical, 10) // Add some vertical padding
                     
                     // Manul name and mood with improved visuals
                     VStack(spacing: 4) {
