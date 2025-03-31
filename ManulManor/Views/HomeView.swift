@@ -329,16 +329,32 @@ struct HomeView: View {
             }
             .transition(.scale.combined(with: .opacity))
         case "play":
-            ZStack {
-                Circle()
-                    .fill(Color.red.opacity(0.3))
-                    .frame(width: 80, height: 80)
-                
-                Image(systemName: "heart.fill")
-                    .font(.system(size: 40))
-                    .foregroundColor(.red)
+            // If there's a selected toy, show its icon
+            if let selectedToyId = viewModel.selectedToy,
+               let selectedToy = viewModel.inventory.first(where: { $0.id == selectedToyId }) {
+                ZStack {
+                    Circle()
+                        .fill(Color.yellow.opacity(0.3))
+                        .frame(width: 80, height: 80)
+                    
+                    Image(systemName: iconFor(selectedToy))
+                        .font(.system(size: 40))
+                        .foregroundColor(colorFor(item: selectedToy))
+                }
+                .transition(.scale.combined(with: .opacity))
+            } else {
+                // Default play animation if no toy is selected
+                ZStack {
+                    Circle()
+                        .fill(Color.red.opacity(0.3))
+                        .frame(width: 80, height: 80)
+                    
+                    Image(systemName: "heart.fill")
+                        .font(.system(size: 40))
+                        .foregroundColor(.red)
+                }
+                .transition(.scale.combined(with: .opacity))
             }
-            .transition(.scale.combined(with: .opacity))
         default:
             EmptyView()
         }

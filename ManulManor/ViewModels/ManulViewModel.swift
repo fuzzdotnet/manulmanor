@@ -11,6 +11,7 @@ class ManulViewModel: ObservableObject {
     @Published var isOnboarding: Bool = false
     @Published var notificationPermissionGranted: Bool = false
     @Published var isSubscribed: Bool = false
+    @Published var selectedToy: String? = nil
     
     // Animation and interaction properties
     @Published var lastInteractionType: String = ""
@@ -197,17 +198,32 @@ class ManulViewModel: ObservableObject {
         // Previous happiness value for feedback
         let previousHappiness = manul.happiness
         
+        // Get the selected toy, if any
+        let toyName = selectedToy != nil ? 
+            (inventory.first(where: { $0.id == selectedToy })?.name ?? "toy") : "toy"
+        
         // Update stats
         manul.happiness = min(1.0, manul.happiness + 0.3)
         manul.lastInteraction = Date()
         
-        // Determine feedback based on improvement
-        if manul.happiness - previousHappiness > 0.25 {
-            showFeedback("\(manul.name) is having so much fun!", interactionType: "play")
-        } else if manul.happiness >= 0.9 {
-            showFeedback("\(manul.name) is very happy!", interactionType: "play")
+        // Determine feedback based on improvement and selected toy
+        if selectedToy != nil {
+            if manul.happiness - previousHappiness > 0.25 {
+                showFeedback("\(manul.name) loves playing with the \(toyName)!", interactionType: "play")
+            } else if manul.happiness >= 0.9 {
+                showFeedback("\(manul.name) is having a great time with the \(toyName)!", interactionType: "play")
+            } else {
+                showFeedback("\(manul.name) enjoyed playing with the \(toyName)", interactionType: "play")
+            }
         } else {
-            showFeedback("\(manul.name) enjoyed playing with you", interactionType: "play")
+            // Generic messages if no toy is selected
+            if manul.happiness - previousHappiness > 0.25 {
+                showFeedback("\(manul.name) is having so much fun!", interactionType: "play")
+            } else if manul.happiness >= 0.9 {
+                showFeedback("\(manul.name) is very happy!", interactionType: "play")
+            } else {
+                showFeedback("\(manul.name) enjoyed playing with you", interactionType: "play")
+            }
         }
         
         // Add XP for interacting
@@ -646,6 +662,9 @@ class ManulViewModel: ObservableObject {
         }
         
         UserDefaults.standard.set(!isOnboarding, forKey: onboardingKey)
+        
+        // Save selected toy
+        UserDefaults.standard.set(selectedToy, forKey: "selected_toy")
     }
     
     func completeOnboarding(withManulName name: String) {
@@ -655,6 +674,58 @@ class ManulViewModel: ObservableObject {
         
         // Show welcome feedback
         showFeedback("Welcome to Manul Manor, \(name)!", interactionType: "onboarding_complete")
+    }
+    
+    // New function to select a toy
+    func selectToy(_ item: Item) {
+        guard item.type == .toy else { return } // Only allow toy type
+        
+        // If the same toy is already selected, deselect it
+        if selectedToy == item.id {
+            selectedToy = nil
+        } else {
+            selectedToy = item.id
+        }
+        
+        objectWillChange.send() // Notify views of change
+        saveData()
+    }
+    
+    // Function to check if a toy is selected
+    func isSelectedToy(_ item: Item) -> Bool {
+        return selectedToy == item.id
+    }
+    
+    func loadData() {
+        // Load manul data
+        if let savedManul = UserDefaults.standard.data(forKey: manulKey),
+           let decodedManul = try? JSONDecoder().decode(Manul.self, from: savedManul) {
+            self.manul = decodedManul
+        }
+        
+        // Load inventory
+        if let savedInventory = UserDefaults.standard.data(forKey: inventoryKey),
+           let decodedInventory = try? JSONDecoder().decode([Item].self, from: savedInventory) {
+            self.inventory = decodedInventory
+        }
+        
+        // Load placed items
+        if let savedPlacedItems = UserDefaults.standard.data(forKey: placedItemsKey),
+           let decodedPlacedItems = try? JSONDecoder().decode([Item].self, from: savedPlacedItems) {
+            self.placedItems = decodedPlacedItems
+        }
+        
+        // Load quiz data
+        if let savedQuiz = UserDefaults.standard.data(forKey: quizKey),
+           let decodedQuiz = try? JSONDecoder().decode(Quiz.self, from: savedQuiz) {
+            self.currentQuiz = decodedQuiz
+        }
+        
+        // Load onboarding state
+        self.isOnboarding = !UserDefaults.standard.bool(forKey: onboardingKey)
+        
+        // Load selected toy
+        self.selectedToy = UserDefaults.standard.string(forKey: "selected_toy")
     }
 }
 

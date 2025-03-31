@@ -143,14 +143,18 @@ struct InventoryView: View {
                         ForEach(filteredItems) { item in
                             let isPlaced = (item.type == .furniture || item.type == .decoration) && viewModel.placedItems.contains(where: { $0.id == item.id })
                             let isCurrentlyWorn = isWorn(item) // Check if the item is worn
+                            let isCurrentlySelected = isSelected(item) // Check if the toy is selected
 
                             ItemView(item: item, showQuantity: item.isConsumable)
                                 .opacity(isPlaced ? 0.5 : 1.0) // Gray out if placed
-                                .overlay( // Add overlay for worn items
+                                .overlay( // Add overlay for worn items or selected toys
                                     isCurrentlyWorn ?
                                         RoundedRectangle(cornerRadius: 10)
                                             .stroke(Color.blue, lineWidth: 3)
-                                        : nil
+                                        : isCurrentlySelected ?
+                                            RoundedRectangle(cornerRadius: 10)
+                                                .stroke(Color.yellow, lineWidth: 3)
+                                            : nil
                                 )
                                 .gesture(
                                     // Only allow dragging for placeable items THAT ARE NOT ALREADY PLACED
@@ -245,7 +249,15 @@ struct InventoryView: View {
             } else {
                 viewModel.wearItem(item)
             }
+        } else if item.type == .toy {
+            // For toys, toggle selection
+            viewModel.selectToy(item)
         }
+    }
+    
+    // Helper to check if a toy is selected
+    private func isSelected(_ item: Item) -> Bool {
+        return item.type == .toy && viewModel.isSelectedToy(item)
     }
 }
 
