@@ -75,34 +75,15 @@ struct HomeView: View {
                         
                         Spacer()
                         
-                        // Resource indicators in a row
-                        HStack(spacing: 12) {
-                            // Coins
-                            ResourceIndicator(
-                                icon: "dollarsign.circle",
-                                value: "\(viewModel.manul.coins)",
-                                color: .yellow
-                            )
-                            
-                            // Add other resources as needed
-                            ResourceIndicator(
-                                icon: "bolt.fill",
-                                value: "500",
-                                color: .green
-                            )
-                            
-                            ResourceIndicator(
-                                icon: "diamond.fill",
-                                value: "200",
-                                color: .blue
-                            )
-                            
-                            ResourceIndicator(
-                                icon: "heart.fill",
-                                value: "0",
-                                color: .red
-                            )
-                        }
+                        // Only show actual coins currency
+                        ResourceIndicator(
+                            icon: "dollarsign.circle",
+                            value: "\(viewModel.manul.coins)",
+                            color: .yellow
+                        )
+                        .padding(.vertical, 6)
+                        .padding(.horizontal, 10)
+                        .background(Capsule().fill(Color.white.opacity(0.3)))
                     }
                     .padding(.horizontal, 16)
                     .padding(.top, 8)
@@ -368,36 +349,18 @@ struct HomeView: View {
                                     selectedAction = nil
                                 }
                             }
+                            
+                            // Add certificate button here
+                            CircleActionButton(
+                                icon: "doc.badge.fill",
+                                color: .purple
+                            ) {
+                                showingCertificate = true
+                            }
                         }
                         .padding(.bottom, 16)
                     }
                     .padding(.bottom, 20)
-                }
-                
-                // Certificate button in the corner
-                VStack {
-                    HStack {
-                        Spacer()
-                        
-                        Button(action: {
-                            showingCertificate = true
-                        }) {
-                            ZStack {
-                                Circle()
-                                    .fill(Color.yellow.opacity(0.9))
-                                    .frame(width: 44, height: 44)
-                                    .shadow(color: Color.black.opacity(0.2), radius: 4, x: 0, y: 2)
-                                
-                                Image(systemName: "star.fill")
-                                    .foregroundColor(.white)
-                                    .font(.system(size: 20, weight: .bold))
-                            }
-                        }
-                        .padding(.top, 24)
-                        .padding(.trailing, 16)
-                    }
-                    
-                    Spacer()
                 }
             }
         }
@@ -486,12 +449,30 @@ struct HomeView: View {
                     .scaleEffect(1.2)
                     .animation(.easeInOut(duration: 0.5).repeatForever(autoreverses: true), value: selectedAction)
             case "play":
-                Image(systemName: "heart.fill")
-                    .font(.system(size: 50))
-                    .foregroundColor(.red)
-                    .opacity(0.8)
+                // Check if a toy is equipped
+                if let selectedToyId = viewModel.selectedToy,
+                   let selectedToy = viewModel.inventory.first(where: { $0.id == selectedToyId }) {
+                    // Show the specific toy
+                    ZStack {
+                        Circle()
+                            .fill(Color.yellow.opacity(0.3))
+                            .frame(width: 80, height: 80)
+                        
+                        Image(systemName: iconFor(selectedToy))
+                            .font(.system(size: 40))
+                            .foregroundColor(colorFor(item: selectedToy))
+                    }
                     .scaleEffect(1.2)
                     .animation(.easeInOut(duration: 0.5).repeatForever(autoreverses: true), value: selectedAction)
+                } else {
+                    // Default heart animation if no toy is selected
+                    Image(systemName: "heart.fill")
+                        .font(.system(size: 50))
+                        .foregroundColor(.red)
+                        .opacity(0.8)
+                        .scaleEffect(1.2)
+                        .animation(.easeInOut(duration: 0.5).repeatForever(autoreverses: true), value: selectedAction)
+                }
             default:
                 EmptyView()
             }
@@ -519,6 +500,35 @@ struct HomeView: View {
         case "purchase_success": return .green
         case "place_item", "remove_item": return .purple
         default: return .gray
+        }
+    }
+    
+    // Add missing helper functions
+    private func iconFor(_ item: Item) -> String {
+        switch item.type {
+        case .food: return "fork.knife"
+        case .toy: return "star.fill" 
+        case .furniture: return "bed.double.fill"
+        case .decoration: return "leaf.fill"
+        case .hat: return "crown.fill"
+        case .accessory: return "gift.fill"
+        }
+    }
+    
+    private func colorFor(item: Item) -> Color {
+        switch item.type {
+        case .food:
+            return .orange
+        case .toy:
+            return .yellow
+        case .furniture:
+            return .brown
+        case .decoration:
+            return Color(red: 0.2, green: 0.8, blue: 0.3)
+        case .hat:
+            return .purple
+        case .accessory:
+            return .pink
         }
     }
 }
