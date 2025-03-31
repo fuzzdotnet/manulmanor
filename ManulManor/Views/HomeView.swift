@@ -11,7 +11,7 @@ struct HomeView: View {
     // Colors for our theme
     private let primaryColor = Color(red: 0.93, green: 0.86, blue: 0.73) // Warm sand color
     private let accentColor = Color(red: 0.47, green: 0.33, blue: 0.28)  // Earth brown
-    private let backgroundColor = Color(red: 0.67, green: 0.78, blue: 0.45) // Forest green background
+    private let backgroundColor = Color(red: 0.75, green: 0.8, blue: 0.55) // Steppe green background
     
     var body: some View {
         GeometryReader { geometry in
@@ -158,13 +158,13 @@ struct HomeView: View {
                     
                     // The central habitat area now fills most of the screen
                     ZStack {
-                        // Circular stone platform for the manul
+                        // Circular area for the manul's habitat
                         Circle()
-                            .fill(Color(red: 0.8, green: 0.75, blue: 0.65))
-                            .frame(width: min(geometry.size.width * 0.7, 280))
+                            .fill(Color(red: 0.82, green: 0.78, blue: 0.67)) // Sandy steppe ground
+                            .frame(width: min(geometry.size.width * 0.8, 300))
                             .shadow(color: Color.black.opacity(0.2), radius: 10, x: 0, y: 5)
                             .overlay(
-                                // Stone pattern overlay
+                                // Ground texture overlay
                                 Circle()
                                     .stroke(Color.gray.opacity(0.3), lineWidth: 2)
                                     .background(
@@ -172,52 +172,96 @@ struct HomeView: View {
                                             .fill(
                                                 RadialGradient(
                                                     gradient: Gradient(colors: [
-                                                        Color(red: 0.85, green: 0.8, blue: 0.7),
-                                                        Color(red: 0.75, green: 0.7, blue: 0.6)
+                                                        Color(red: 0.85, green: 0.82, blue: 0.7),
+                                                        Color(red: 0.78, green: 0.75, blue: 0.62)
                                                     ]),
                                                     center: .center,
                                                     startRadius: 0,
-                                                    endRadius: 140
+                                                    endRadius: 150
                                                 )
                                             )
                                     )
                                     .clipShape(Circle())
                             )
                         
-                        // Cooking pot/cauldron
+                        // Rock formation placeholder
                         ZStack {
-                            // Pot base
-                            Circle()
-                                .fill(Color(red: 0.35, green: 0.4, blue: 0.45))
-                                .frame(width: min(geometry.size.width * 0.35, 140), height: min(geometry.size.width * 0.25, 100))
-                            
-                            // Pot contents (soup/stew)
-                            Circle()
-                                .fill(Color.yellow.opacity(0.7))
-                                .frame(width: min(geometry.size.width * 0.3, 120), height: min(geometry.size.width * 0.18, 70))
-                                .offset(y: -10)
-                            
-                            // Spoon/ladle
-                            HStack {
-                                Circle()
-                                    .fill(Color.pink.opacity(0.7))
-                                    .frame(width: 30, height: 30)
-                                    .overlay(
-                                        Circle()
-                                            .stroke(Color.gray, lineWidth: 1)
-                                    )
-                                
-                                Rectangle()
-                                    .fill(Color.gray.opacity(0.8))
-                                    .frame(width: 40, height: 5)
+                            // Base of the rock formation
+                            Path { path in
+                                // Main rock
+                                path.move(to: CGPoint(x: -50, y: 20))
+                                path.addQuadCurve(
+                                    to: CGPoint(x: -10, y: -40),
+                                    control: CGPoint(x: -40, y: -30)
+                                )
+                                path.addQuadCurve(
+                                    to: CGPoint(x: 30, y: -20),
+                                    control: CGPoint(x: 20, y: -50)
+                                )
+                                path.addQuadCurve(
+                                    to: CGPoint(x: 50, y: 10),
+                                    control: CGPoint(x: 50, y: -10)
+                                )
+                                path.addQuadCurve(
+                                    to: CGPoint(x: 20, y: 30),
+                                    control: CGPoint(x: 45, y: 30)
+                                )
+                                path.addQuadCurve(
+                                    to: CGPoint(x: -50, y: 20),
+                                    control: CGPoint(x: -10, y: 50)
+                                )
                             }
-                            .rotationEffect(.degrees(-30))
-                            .offset(x: 40, y: -30)
+                            .fill(
+                                LinearGradient(
+                                    gradient: Gradient(colors: [
+                                        Color(red: 0.6, green: 0.55, blue: 0.5),
+                                        Color(red: 0.5, green: 0.45, blue: 0.4)
+                                    ]),
+                                    startPoint: .top,
+                                    endPoint: .bottom
+                                )
+                            )
+                            
+                            // Small rocks around the main formation
+                            Circle()
+                                .fill(Color(red: 0.55, green: 0.5, blue: 0.45))
+                                .frame(width: 25, height: 18)
+                                .offset(x: -60, y: 10)
+                            
+                            Ellipse()
+                                .fill(Color(red: 0.6, green: 0.55, blue: 0.5))
+                                .frame(width: 35, height: 20)
+                                .offset(x: 60, y: 15)
+                                .rotationEffect(.degrees(15))
+                            
+                            // Rock texture/details
+                            Path { path in
+                                path.move(to: CGPoint(x: -20, y: -20))
+                                path.addLine(to: CGPoint(x: 0, y: -15))
+                                path.addLine(to: CGPoint(x: -10, y: -5))
+                            }
+                            .stroke(Color.gray.opacity(0.5), lineWidth: 1)
+                            
+                            Path { path in
+                                path.move(to: CGPoint(x: 10, y: 0))
+                                path.addLine(to: CGPoint(x: 30, y: 10))
+                            }
+                            .stroke(Color.gray.opacity(0.4), lineWidth: 1)
+                            
+                            // Text to indicate this is a placeholder
+                            // Remove this in final version when real SVG is used
+                            Text("Rock Formation\nPlaceholder")
+                                .font(.system(size: 8))
+                                .foregroundColor(.white.opacity(0.6))
+                                .multilineTextAlignment(.center)
+                                .offset(y: -5)
                         }
+                        .frame(width: 150, height: 100)
+                        .offset(y: 30)
                         
                         // Manul character
                         ManulView(mood: viewModel.manul.mood, wearingItems: viewModel.manul.wearingItems, scaleFactor: 0.3)
-                            .offset(x: habitatOffset, y: -30)
+                            .offset(x: habitatOffset, y: -15)
                             .gesture(
                                 DragGesture()
                                     .onChanged { value in
@@ -247,6 +291,18 @@ struct HomeView: View {
                         if let action = selectedAction {
                             actionAnimation(for: action)
                                 .offset(y: -50)
+                        }
+                        
+                        // Add some sparse grass tufts around the edges
+                        ForEach(0..<8) { i in
+                            let angle = Double(i) * .pi / 4
+                            let radius = 130.0
+                            let x = cos(angle) * radius
+                            let y = sin(angle) * radius
+                            
+                            GrassTuft()
+                                .offset(x: CGFloat(x), y: CGFloat(y))
+                                .rotationEffect(.degrees(Double(i * 45)))
                         }
                     }
                     .frame(maxHeight: .infinity)
@@ -805,5 +861,28 @@ struct FoodSelectionView: View {
         default:
             return .gray
         }
+    }
+}
+
+// Add a new component for grass tufts
+struct GrassTuft: View {
+    var body: some View {
+        ZStack {
+            // Multiple blades of grass
+            ForEach(0..<3) { i in
+                Path { path in
+                    path.move(to: CGPoint(x: CGFloat(i) * 3 - 3, y: 0))
+                    path.addQuadCurve(
+                        to: CGPoint(x: CGFloat(i) * 3 - 6, y: -10 - CGFloat(i) * 3),
+                        control: CGPoint(x: CGFloat(i) * 3 - 7, y: -5)
+                    )
+                }
+                .stroke(
+                    Color(red: 0.5, green: 0.65, blue: 0.3),
+                    style: StrokeStyle(lineWidth: 1.5, lineCap: .round)
+                )
+            }
+        }
+        .frame(width: 10, height: 15)
     }
 } 
