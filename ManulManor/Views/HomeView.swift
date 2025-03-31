@@ -39,13 +39,13 @@ struct HomeView: View {
             .ignoresSafeArea()
             
             // Content layer
-            VStack(alignment: .center, spacing: 0) {
+                VStack(alignment: .center, spacing: 0) {
                 // Habitat area
                 Spacer()
                     .frame(height: 160) // Reserve space for top elements but don't change with stats
                 
                 // Manul habitat
-                ZStack {
+                            ZStack {
                     // Circular habitat ground
                     Circle()
                         .fill(Color(red: 0.82, green: 0.78, blue: 0.67))
@@ -55,7 +55,7 @@ struct HomeView: View {
                             Circle()
                                 .stroke(Color.gray.opacity(0.3), lineWidth: 2)
                                 .background(
-                                    Circle()
+                                Circle()
                                         .fill(
                                             RadialGradient(
                                                 gradient: Gradient(colors: [
@@ -143,34 +143,34 @@ struct HomeView: View {
                     // Manul character
                     ManulView(mood: viewModel.manul.mood, wearingItems: viewModel.manul.wearingItems, scaleFactor: 0.6)
                         .offset(x: habitatOffset, y: -30)
-                        .gesture(
-                            DragGesture()
-                                .onChanged { value in
-                                    self.isHabitatDragging = true
-                                    let horizontalDragLimit: CGFloat = 40
-                                    self.habitatOffset = min(horizontalDragLimit, max(-horizontalDragLimit, value.translation.width / 3))
-                                }
-                                .onEnded { _ in
-                                    withAnimation(.spring()) {
-                                        self.habitatOffset = 0
-                                        self.isHabitatDragging = false
+                                        .gesture(
+                                            DragGesture()
+                                                .onChanged { value in
+                                                    self.isHabitatDragging = true
+                                                    let horizontalDragLimit: CGFloat = 40
+                                                    self.habitatOffset = min(horizontalDragLimit, max(-horizontalDragLimit, value.translation.width / 3))
+                                                }
+                                                .onEnded { _ in
+                                                    withAnimation(.spring()) {
+                                                        self.habitatOffset = 0
+                                                        self.isHabitatDragging = false
+                                                    }
+                                                }
+                                        )
+                                        .scaleEffect(isHabitatDragging ? 0.95 : 1.0)
+                                        .animation(.spring(response: 0.3), value: isHabitatDragging)
+                                    
+                                    // Placed decorations
+                                    ForEach(viewModel.placedItems) { item in
+                                        if let position = item.position {
+                                            PlacedItemView(item: item)
+                                                .position(position)
+                                        }
                                     }
-                                }
-                        )
-                        .scaleEffect(isHabitatDragging ? 0.95 : 1.0)
-                        .animation(.spring(response: 0.3), value: isHabitatDragging)
-                    
-                    // Placed decorations
-                    ForEach(viewModel.placedItems) { item in
-                        if let position = item.position {
-                            PlacedItemView(item: item)
-                                .position(position)
-                        }
-                    }
-                    
+                                    
                     // Action animations
-                    if let action = selectedAction {
-                        actionAnimation(for: action)
+                                    if let action = selectedAction {
+                                        actionAnimation(for: action)
                             .offset(y: -50)
                     }
                     
@@ -181,9 +181,10 @@ struct HomeView: View {
                         let x = cos(angle) * radius
                         let y = sin(angle) * radius
                         
-                        GrassTuft()
+                        Circle()
+                            .fill(Color(red: 0.3, green: 0.6, blue: 0.2).opacity(0.6))
+                            .frame(width: 10, height: 10)
                             .offset(x: CGFloat(x), y: CGFloat(y))
-                            .rotationEffect(.degrees(Double(i * 45)))
                     }
                 }
                 .frame(maxWidth: .infinity) // Ensure habitat takes full width
@@ -192,16 +193,16 @@ struct HomeView: View {
                 // Bottom action area
                 VStack(spacing: 8) {
                     // Name and mood
-                    HStack(spacing: 6) {
-                        Image(systemName: moodIcon(for: viewModel.manul.mood))
-                            .foregroundColor(moodColor(for: viewModel.manul.mood))
-                        
+                            HStack(spacing: 6) {
+                                Image(systemName: moodIcon(for: viewModel.manul.mood))
+                                    .foregroundColor(moodColor(for: viewModel.manul.mood))
+                                
                         Text(viewModel.manul.name)
                             .font(.system(size: 20, weight: .bold, design: .rounded))
                             .foregroundColor(.white)
                         
                         Text("• \(moodText(for: viewModel.manul.mood))")
-                            .font(.system(size: 16, weight: .medium, design: .rounded))
+                                    .font(.system(size: 16, weight: .medium, design: .rounded))
                             .foregroundColor(.white.opacity(0.8))
                     }
                     .padding(.vertical, 8)
@@ -432,8 +433,8 @@ struct HomeView: View {
     
     private func actionAnimation(for action: String) -> some View {
         Group {
-            switch action {
-            case "feed":
+        switch action {
+        case "feed":
                 Image(systemName: "fork.knife")
                     .font(.system(size: 50))
                     .foregroundColor(.orange)
@@ -441,28 +442,28 @@ struct HomeView: View {
                     .scaleEffect(1.2)
                     .rotationEffect(.degrees(15))
                     .animation(.easeInOut(duration: 0.5).repeatForever(autoreverses: true), value: selectedAction)
-            case "clean":
+        case "clean":
                 Image(systemName: "sparkles")
                     .font(.system(size: 50))
                     .foregroundColor(.blue)
                     .opacity(0.8)
                     .scaleEffect(1.2)
                     .animation(.easeInOut(duration: 0.5).repeatForever(autoreverses: true), value: selectedAction)
-            case "play":
-                if let selectedToyId = viewModel.selectedToy,
-                   let selectedToy = viewModel.inventory.first(where: { $0.id == selectedToyId }) {
-                    ZStack {
-                        Circle()
-                            .fill(Color.yellow.opacity(0.3))
-                            .frame(width: 80, height: 80)
-                        
-                        Image(systemName: iconFor(selectedToy))
-                            .font(.system(size: 40))
-                            .foregroundColor(colorFor(item: selectedToy))
-                    }
+        case "play":
+            if let selectedToyId = viewModel.selectedToy,
+               let selectedToy = viewModel.inventory.first(where: { $0.id == selectedToyId }) {
+                ZStack {
+                    Circle()
+                        .fill(Color.yellow.opacity(0.3))
+                        .frame(width: 80, height: 80)
+                    
+                    Image(systemName: iconFor(selectedToy))
+                        .font(.system(size: 40))
+                        .foregroundColor(colorFor(item: selectedToy))
+                }
                     .scaleEffect(1.2)
                     .animation(.easeInOut(duration: 0.5).repeatForever(autoreverses: true), value: selectedAction)
-                } else {
+            } else {
                     Image(systemName: "heart.fill")
                         .font(.system(size: 50))
                         .foregroundColor(.red)
@@ -657,29 +658,6 @@ struct CircleActionButton: View {
                     .foregroundColor(color)
             }
         }
-    }
-}
-
-// Grass tuft
-struct GrassTuft: View {
-    var body: some View {
-        ZStack {
-            // Multiple blades of grass
-            ForEach(0..<3) { i in
-                Path { path in
-                    path.move(to: CGPoint(x: CGFloat(i) * 3 - 3, y: 0))
-                    path.addQuadCurve(
-                        to: CGPoint(x: CGFloat(i) * 3 - 6, y: -10 - CGFloat(i) * 3),
-                        control: CGPoint(x: CGFloat(i) * 3 - 7, y: -5)
-                    )
-                }
-                .stroke(
-                    Color(red: 0.5, green: 0.65, blue: 0.3),
-                    style: StrokeStyle(lineWidth: 1.5, lineCap: .round)
-                )
-            }
-        }
-        .frame(width: 10, height: 15)
     }
 }
 

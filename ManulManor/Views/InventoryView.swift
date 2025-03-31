@@ -144,10 +144,10 @@ struct InventoryView: View {
                             let x = cos(angle) * radius
                             let y = sin(angle) * radius
                             
-                            GrassTuft()
-                                .frame(width: 15, height: 15)
+                            Circle()
+                                .fill(Color(red: 0.3, green: 0.6, blue: 0.2).opacity(0.6))
+                                .frame(width: 8, height: 8)
                                 .offset(x: CGFloat(x), y: CGFloat(y))
-                                .rotationEffect(.degrees(Double(i * 60)))
                         }
                         
                         // Display placed items
@@ -454,29 +454,5 @@ struct FeedConfirmationView: View {
             .padding(.top, 20)
         }
         .padding()
-    }
-}
-
-// Simple grass tuft view for habitat decoration
-struct GrassTuft: View {
-    var body: some View {
-        VStack(spacing: -2) {
-            ForEach(0..<3) { i in
-                let width: CGFloat = CGFloat(3 - i) * 4
-                let height: CGFloat = CGFloat(3 - i) * 8
-                
-                Path { path in
-                    path.move(to: CGPoint(x: -width/2, y: 0))
-                    path.addQuadCurve(
-                        to: CGPoint(x: width/2, y: 0),
-                        control: CGPoint(x: 0, y: -height)
-                    )
-                }
-                .stroke(
-                    Color(red: 0.3, green: 0.6, blue: 0.2).opacity(0.8 + CGFloat(i) * 0.1),
-                    lineWidth: 1
-                )
-            }
-        }
     }
 } 
