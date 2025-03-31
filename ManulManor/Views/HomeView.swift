@@ -27,7 +27,7 @@ struct HomeView: View {
                 )
                 .ignoresSafeArea()
                 
-                VStack(spacing: 0) {
+                VStack(alignment: .center, spacing: 0) {
                     // Top status bar with improved layout
                     HStack {
                         // Level badge with improved visuals
@@ -85,7 +85,7 @@ struct HomeView: View {
                                 .shadow(color: Color.black.opacity(0.1), radius: 2, x: 0, y: 1)
                         )
                     }
-                    .padding(.horizontal, 16)
+                    .frame(width: geometry.size.width - 32)
                     .padding(.top, 12)
                     .padding(.bottom, 4)
                     
@@ -112,7 +112,7 @@ struct HomeView: View {
                             label: "Hygiene"
                         )
                     }
-                    .padding(.horizontal, 16)
+                    .frame(width: geometry.size.width - 32)
                     .padding(.top, 4)
                     
                     // Simple feedback message for interactions
@@ -150,73 +150,70 @@ struct HomeView: View {
                     Spacer()
                     
                     // Habitat area with manul and decorations
-                    HStack {
-                        Spacer() // Add equal spacing on both sides
-                        ZStack {
-                            // Habitat background
-                            RoundedRectangle(cornerRadius: 30)
-                                .fill(primaryColor.opacity(0.5))
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 30)
-                                        .stroke(accentColor.opacity(0.2), lineWidth: 1)
-                                )
-                            
-                            // Manul view with reduced size
-                            ManulView(mood: viewModel.manul.mood)
-                                .frame(width: 40, height: 40) // Reduced size further
-                                .offset(x: habitatOffset)
-                                .gesture(
-                                    DragGesture()
-                                        .onChanged { value in
-                                            self.isHabitatDragging = true
-                                            let horizontalDragLimit: CGFloat = 40
-                                            self.habitatOffset = min(horizontalDragLimit, max(-horizontalDragLimit, value.translation.width / 3))
+                    VStack(spacing: 0) {
+                        RoundedRectangle(cornerRadius: 30)
+                            .fill(primaryColor.opacity(0.5))
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 30)
+                                    .stroke(accentColor.opacity(0.2), lineWidth: 1)
+                            )
+                            .frame(width: geometry.size.width - 32, height: 300)
+                            .overlay {
+                                ZStack {
+                                    // Manul view with reduced size and wearables
+                                    ManulView(mood: viewModel.manul.mood, wearingItems: viewModel.manul.wearingItems)
+                                        .frame(width: 40, height: 40) // Reduced size further
+                                        .offset(x: habitatOffset)
+                                        .gesture(
+                                            DragGesture()
+                                                .onChanged { value in
+                                                    self.isHabitatDragging = true
+                                                    let horizontalDragLimit: CGFloat = 40
+                                                    self.habitatOffset = min(horizontalDragLimit, max(-horizontalDragLimit, value.translation.width / 3))
+                                                }
+                                                .onEnded { _ in
+                                                    withAnimation(.spring()) {
+                                                        self.habitatOffset = 0
+                                                        self.isHabitatDragging = false
+                                                    }
+                                                }
+                                        )
+                                        .scaleEffect(isHabitatDragging ? 0.95 : 1.0)
+                                        .animation(.spring(response: 0.3), value: isHabitatDragging)
+                                    
+                                    // Placed decorations
+                                    ForEach(viewModel.placedItems) { item in
+                                        if let position = item.position {
+                                            PlacedItemView(item: item)
+                                                .position(position)
                                         }
-                                        .onEnded { _ in
-                                            withAnimation(.spring()) {
-                                                self.habitatOffset = 0
-                                                self.isHabitatDragging = false
-                                            }
-                                        }
-                                )
-                                .scaleEffect(isHabitatDragging ? 0.95 : 1.0)
-                                .animation(.spring(response: 0.3), value: isHabitatDragging)
-                            
-                            // Placed decorations
-                            ForEach(viewModel.placedItems) { item in
-                                if let position = item.position {
-                                    PlacedItemView(item: item)
-                                        .position(position)
+                                    }
+                                    
+                                    // Animation for actions
+                                    if let action = selectedAction {
+                                        actionAnimation(for: action)
+                                            .position(x: geometry.size.width / 2, y: geometry.size.height * 0.25) 
+                                    }
                                 }
                             }
+                        
+                        // Manul name and mood with improved visuals
+                        VStack(spacing: 4) {
+                            Text(viewModel.manul.name)
+                                .font(.system(size: 24, weight: .bold, design: .rounded))
+                                .foregroundColor(accentColor)
                             
-                            // Animation for actions
-                            if let action = selectedAction {
-                                actionAnimation(for: action)
-                                    .position(x: geometry.size.width / 2, y: geometry.size.height * 0.25) 
+                            HStack(spacing: 6) {
+                                Image(systemName: moodIcon(for: viewModel.manul.mood))
+                                    .foregroundColor(moodColor(for: viewModel.manul.mood))
+                                
+                                Text(moodText(for: viewModel.manul.mood))
+                                    .font(.system(size: 16, weight: .medium, design: .rounded))
+                                    .foregroundColor(Color.gray.opacity(0.8))
                             }
                         }
-                        .frame(height: 300)
-                        .frame(maxWidth: geometry.size.width - 32) // Match the exact spacing needed
-                        Spacer() // Add equal spacing on both sides
+                        .padding(.vertical, 12)
                     }
-                    
-                    // Manul name and mood with improved visuals
-                    VStack(spacing: 4) {
-                        Text(viewModel.manul.name)
-                            .font(.system(size: 24, weight: .bold, design: .rounded))
-                            .foregroundColor(accentColor)
-                        
-                        HStack(spacing: 6) {
-                            Image(systemName: moodIcon(for: viewModel.manul.mood))
-                                .foregroundColor(moodColor(for: viewModel.manul.mood))
-                            
-                            Text(moodText(for: viewModel.manul.mood))
-                                .font(.system(size: 16, weight: .medium, design: .rounded))
-                                .foregroundColor(Color.gray.opacity(0.8))
-                        }
-                    }
-                    .padding(.vertical, 12)
                     
                     Spacer()
                     
@@ -280,6 +277,7 @@ struct HomeView: View {
                             showingCertificate = true
                         }
                     }
+                    .frame(width: geometry.size.width - 32, alignment: .center)
                     .padding(.bottom, 25)
                 }
             }

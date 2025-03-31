@@ -3,7 +3,15 @@ import SwiftUI
 // Improved manul view with better visuals
 struct ManulView: View {
     let mood: Manul.Mood
+    var wearingItems: [String] = [] // IDs of worn items
     
+    // Placeholder: Check if a hat is being worn
+    private var isWearingHat: Bool {
+        // This logic needs refinement based on actual item data
+        // For now, just check if any worn item ID contains "hat"
+        wearingItems.contains { $0.contains("hat") } 
+    }
+
     var body: some View {
         // In a real implementation, this would use actual manul images for different moods
         ZStack {
@@ -104,6 +112,19 @@ struct ManulView: View {
                     }
                 }
                 .offset(x: 30, y: 0)
+            }
+
+            // Wearables - Add on top
+            if isWearingHat {
+                // Placeholder Beanie
+                Circle()
+                    .fill(Color.red)
+                    .frame(width: 60, height: 40)
+                    .offset(y: -90) // Position above the head
+                Circle()
+                    .fill(Color.white)
+                    .frame(width: 10, height: 10)
+                    .offset(y: -110) // Pom-pom
             }
         }
     }

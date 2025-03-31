@@ -2,7 +2,7 @@ import SwiftUI
 
 struct InventoryView: View {
     @EnvironmentObject var viewModel: ManulViewModel
-    @State private var selectedCategory: Item.ItemType = .food
+    @State private var selectedCategory: Item.ItemType = .toy
     @State private var draggedItem: Item?
     @State private var isDragging = false
     @State private var dragPosition = CGPoint.zero // Use global coordinates for drag position
@@ -26,6 +26,11 @@ struct InventoryView: View {
         }
     }
     
+    // Helper to check if an item is currently worn
+    private func isWorn(_ item: Item) -> Bool {
+        viewModel.manul.wearingItems.contains(item.id)
+    }
+
     var body: some View {
         ZStack { // Use a ZStack to overlay the dragged item view
             VStack {
@@ -34,6 +39,7 @@ struct InventoryView: View {
                     .font(.title)
                     .fontWeight(.bold)
                     .padding()
+                    .frame(maxWidth: .infinity) // Ensure header is centered
                 
                 // Category selector
                 ScrollView(.horizontal, showsIndicators: false) {
@@ -113,6 +119,7 @@ struct InventoryView: View {
                             }
                         }
                     }
+                    .frame(maxWidth: .infinity) // Use full width within GeometryReader
                     .onAppear {
                         // Store the habitat frame in global coordinates
                         self.habitatFrame = geometry.frame(in: .global)
@@ -123,6 +130,7 @@ struct InventoryView: View {
                     }
                 }
                 .frame(height: 300) // Give GeometryReader a defined height
+                .padding(.horizontal, 16) // Consistent padding
                 
                 Divider()
                 
@@ -135,9 +143,16 @@ struct InventoryView: View {
                     ], spacing: 20) {
                         ForEach(filteredItems) { item in
                             let isPlaced = (item.type == .furniture || item.type == .decoration) && viewModel.placedItems.contains(where: { $0.id == item.id })
-                            
+                            let isCurrentlyWorn = isWorn(item) // Check if the item is worn
+
                             ItemView(item: item, showQuantity: item.isConsumable)
                                 .opacity(isPlaced ? 0.5 : 1.0) // Gray out if placed
+                                .overlay( // Add overlay for worn items
+                                    isCurrentlyWorn ?
+                                        RoundedRectangle(cornerRadius: 10)
+                                            .stroke(Color.blue, lineWidth: 3)
+                                        : nil
+                                )
                                 .gesture(
                                     // Only allow dragging for placeable items THAT ARE NOT ALREADY PLACED
                                     (item.type == .furniture || item.type == .decoration) && !isPlaced ?
@@ -226,7 +241,7 @@ struct InventoryView: View {
     private func handleItemTap(_ item: Item) {
         if item.type == .hat || item.type == .accessory {
             // For wearable items, toggle wearing
-            if viewModel.manul.wearingItems.contains(item.id) {
+            if isWorn(item) {
                 viewModel.removeWornItem(item)
             } else {
                 viewModel.wearItem(item)

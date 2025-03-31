@@ -282,17 +282,24 @@ class ManulViewModel: ObservableObject {
         saveData()
     }
     
-    // Consume an item (reduce quantity by 1)
     func consumeItem(_ item: Item) {
         guard item.isConsumable else { return }
-        
-        if let index = inventory.firstIndex(where: { $0.id == item.id }) {
-            if inventory[index].quantity > 0 {
-                inventory[index].quantity -= 1
+
+        if var foundItem = inventory.first(where: { $0.id == item.id }) {
+            foundItem.quantity -= 1
+            if foundItem.quantity <= 0 {
+                // Remove if quantity is zero and it's not grasshoppers
+                if item.id != "food_grasshoppers" {
+                    inventory.removeAll { $0.id == item.id }
+                }
+            } else {
+                // Update quantity in inventory
+                if let index = inventory.firstIndex(where: { $0.id == item.id }) {
+                    inventory[index] = foundItem
+                }
             }
+            saveData()
         }
-        
-        saveData()
     }
     
     // Add multiple units of a consumable item
@@ -363,26 +370,26 @@ class ManulViewModel: ObservableObject {
         saveData()
     }
     
+    // New function to wear an item
     func wearItem(_ item: Item) {
-        if !manul.wearingItems.contains(item.id) {
-            manul.wearingItems.append(item.id)
-            
-            // Improve happiness slightly when dressing up
-            manul.happiness = min(1.0, manul.happiness + 0.05)
-            
-            // Show feedback
-            showFeedback("\(manul.name) looks great in the \(item.name)!", interactionType: "wear_item")
-            
-            saveData()
+        guard item.type == .hat || item.type == .accessory else { return } // Only allow wearable types
+        
+        // Basic implementation: Only one hat/accessory at a time for now
+        // Remove any existing item of the same type before wearing the new one
+        manul.wearingItems.removeAll { itemId in
+            guard let existingItem = inventory.first(where: { $0.id == itemId }) else { return false }
+            return existingItem.type == item.type
         }
+        
+        manul.wearingItems.append(item.id)
+        objectWillChange.send() // Notify views of change
+        saveData()
     }
-    
+
+    // New function to remove a worn item
     func removeWornItem(_ item: Item) {
         manul.wearingItems.removeAll { $0 == item.id }
-        
-        // Show feedback
-        showFeedback("Removed \(item.name)", interactionType: "remove_worn_item")
-        
+        objectWillChange.send() // Notify views of change
         saveData()
     }
     
