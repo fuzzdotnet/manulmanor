@@ -16,410 +16,350 @@ struct HomeView: View {
     
     var body: some View {
         GeometryReader { geometry in
-            ZStack(alignment: .top) {
-                // Full-screen nature background that resembles a forest clearing
-                backgroundColor
-                    .ignoresSafeArea()
-                
-                // Ground details
-                VStack {
-                    Spacer()
-                    
-                    // Ground curve
-                    Path { path in
-                        path.move(to: CGPoint(x: 0, y: geometry.size.height * 0.25))
-                        path.addQuadCurve(
-                            to: CGPoint(x: geometry.size.width, y: geometry.size.height * 0.25),
-                            control: CGPoint(x: geometry.size.width/2, y: geometry.size.height * 0.35)
-                        )
-                        path.addLine(to: CGPoint(x: geometry.size.width, y: geometry.size.height))
-                        path.addLine(to: CGPoint(x: 0, y: geometry.size.height))
-                        path.closeSubpath()
-                    }
-                    .fill(Color(red: 0.62, green: 0.73, blue: 0.40))
-                }
+            // Base layer - background
+            backgroundColor
                 .ignoresSafeArea()
+            
+            // Ground layer
+            VStack {
+                Spacer()
                 
-                // Main content area
-                VStack(spacing: 0) {
-                    Spacer()
-                        .frame(height: 60) // Space for the top bar
-                    
-                    // The central habitat area now fills most of the screen
-                    ZStack {
-                        // Circular area for the manul's habitat
-                        Circle()
-                            .fill(Color(red: 0.82, green: 0.78, blue: 0.67)) // Sandy steppe ground
-                            .frame(width: min(geometry.size.width * 0.8, 300))
-                            .shadow(color: Color.black.opacity(0.2), radius: 10, x: 0, y: 5)
-                            .overlay(
-                                // Ground texture overlay
-                                Circle()
-                                    .stroke(Color.gray.opacity(0.3), lineWidth: 2)
-                                    .background(
-                                        Circle()
-                                            .fill(
-                                                RadialGradient(
-                                                    gradient: Gradient(colors: [
-                                                        Color(red: 0.85, green: 0.82, blue: 0.7),
-                                                        Color(red: 0.78, green: 0.75, blue: 0.62)
-                                                    ]),
-                                                    center: .center,
-                                                    startRadius: 0,
-                                                    endRadius: 150
-                                                )
-                                            )
-                                    )
-                                    .clipShape(Circle())
-                            )
-                        
-                        // Rock formation placeholder
-                        ZStack {
-                            // Base of the rock formation
-                            Path { path in
-                                // Main rock
-                                path.move(to: CGPoint(x: -50, y: 20))
-                                path.addQuadCurve(
-                                    to: CGPoint(x: -10, y: -40),
-                                    control: CGPoint(x: -40, y: -30)
-                                )
-                                path.addQuadCurve(
-                                    to: CGPoint(x: 30, y: -20),
-                                    control: CGPoint(x: 20, y: -50)
-                                )
-                                path.addQuadCurve(
-                                    to: CGPoint(x: 50, y: 10),
-                                    control: CGPoint(x: 50, y: -10)
-                                )
-                                path.addQuadCurve(
-                                    to: CGPoint(x: 20, y: 30),
-                                    control: CGPoint(x: 45, y: 30)
-                                )
-                                path.addQuadCurve(
-                                    to: CGPoint(x: -50, y: 20),
-                                    control: CGPoint(x: -10, y: 50)
-                                )
-                            }
-                            .fill(
-                                LinearGradient(
-                                    gradient: Gradient(colors: [
-                                        Color(red: 0.6, green: 0.55, blue: 0.5),
-                                        Color(red: 0.5, green: 0.45, blue: 0.4)
-                                    ]),
-                                    startPoint: .top,
-                                    endPoint: .bottom
-                                )
-                            )
-                            
-                            // Small rocks around the main formation
+                Path { path in
+                    path.move(to: CGPoint(x: 0, y: geometry.size.height * 0.25))
+                    path.addQuadCurve(
+                        to: CGPoint(x: geometry.size.width, y: geometry.size.height * 0.25),
+                        control: CGPoint(x: geometry.size.width/2, y: geometry.size.height * 0.35)
+                    )
+                    path.addLine(to: CGPoint(x: geometry.size.width, y: geometry.size.height))
+                    path.addLine(to: CGPoint(x: 0, y: geometry.size.height))
+                    path.closeSubpath()
+                }
+                .fill(Color(red: 0.62, green: 0.73, blue: 0.40))
+            }
+            .ignoresSafeArea()
+            
+            // Content layer
+            VStack {
+                // Habitat area
+                Spacer()
+                    .frame(height: 160) // Reserve space for top elements but don't change with stats
+                
+                // Manul habitat
+                ZStack {
+                    // Circular habitat ground
+                    Circle()
+                        .fill(Color(red: 0.82, green: 0.78, blue: 0.67))
+                        .frame(width: min(geometry.size.width * 0.8, 300))
+                        .shadow(color: Color.black.opacity(0.2), radius: 10, x: 0, y: 5)
+                        .overlay(
                             Circle()
-                                .fill(Color(red: 0.55, green: 0.5, blue: 0.45))
-                                .frame(width: 25, height: 18)
-                                .offset(x: -60, y: 10)
-                            
-                            Ellipse()
-                                .fill(Color(red: 0.6, green: 0.55, blue: 0.5))
-                                .frame(width: 35, height: 20)
-                                .offset(x: 60, y: 15)
-                                .rotationEffect(.degrees(15))
-                            
-                            // Rock texture/details
-                            Path { path in
-                                path.move(to: CGPoint(x: -20, y: -20))
-                                path.addLine(to: CGPoint(x: 0, y: -15))
-                                path.addLine(to: CGPoint(x: -10, y: -5))
-                            }
-                            .stroke(Color.gray.opacity(0.5), lineWidth: 1)
-                            
-                            Path { path in
-                                path.move(to: CGPoint(x: 10, y: 0))
-                                path.addLine(to: CGPoint(x: 30, y: 10))
-                            }
-                            .stroke(Color.gray.opacity(0.4), lineWidth: 1)
-                            
-                            // Text to indicate this is a placeholder
-                            // Remove this in final version when real SVG is used
-                            Text("Rock Formation\nPlaceholder")
-                                .font(.system(size: 8))
-                                .foregroundColor(.white.opacity(0.6))
-                                .multilineTextAlignment(.center)
-                                .offset(y: -5)
-                        }
-                        .frame(width: 150, height: 100)
-                        .offset(y: 30)
-                        
-                        // Manul character
-                        ManulView(mood: viewModel.manul.mood, wearingItems: viewModel.manul.wearingItems, scaleFactor: 0.3)
-                            .offset(x: habitatOffset, y: -15)
-                            .gesture(
-                                DragGesture()
-                                    .onChanged { value in
-                                        self.isHabitatDragging = true
-                                        let horizontalDragLimit: CGFloat = 40
-                                        self.habitatOffset = min(horizontalDragLimit, max(-horizontalDragLimit, value.translation.width / 3))
-                                    }
-                                    .onEnded { _ in
-                                        withAnimation(.spring()) {
-                                            self.habitatOffset = 0
-                                            self.isHabitatDragging = false
-                                        }
-                                    }
-                            )
-                            .scaleEffect(isHabitatDragging ? 0.95 : 1.0)
-                            .animation(.spring(response: 0.3), value: isHabitatDragging)
-                        
-                        // Placed decorations
-                        ForEach(viewModel.placedItems) { item in
-                            if let position = item.position {
-                                PlacedItemView(item: item)
-                                    .position(position)
-                            }
-                        }
-                        
-                        // Action animations
-                        if let action = selectedAction {
-                            actionAnimation(for: action)
-                                .offset(y: -50)
-                        }
-                        
-                        // Add some sparse grass tufts around the edges
-                        ForEach(0..<8) { i in
-                            let angle = Double(i) * .pi / 4
-                            let radius = 130.0
-                            let x = cos(angle) * radius
-                            let y = sin(angle) * radius
-                            
-                            GrassTuft()
-                                .offset(x: CGFloat(x), y: CGFloat(y))
-                                .rotationEffect(.degrees(Double(i * 45)))
-                        }
-                    }
-                    .frame(maxHeight: .infinity)
-                    
-                    // Bottom action area
-                    VStack(spacing: 8) {
-                        // Manul name and mood
-                        HStack(spacing: 6) {
-                            Image(systemName: moodIcon(for: viewModel.manul.mood))
-                                .foregroundColor(moodColor(for: viewModel.manul.mood))
-                            
-                            Text(viewModel.manul.name)
-                                .font(.system(size: 20, weight: .bold, design: .rounded))
-                                .foregroundColor(.white)
-                            
-                            Text("• \(moodText(for: viewModel.manul.mood))")
-                                .font(.system(size: 16, weight: .medium, design: .rounded))
-                                .foregroundColor(.white.opacity(0.8))
-                        }
-                        .padding(.vertical, 8)
-                        
-                        // Minimalistic action buttons
-                        HStack(spacing: geometry.size.width * 0.08) {
-                            CircleActionButton(
-                                icon: "fork.knife",
-                                color: .orange
-                            ) {
-                                showingFoodSelection = true
-                            }
-                            
-                            CircleActionButton(
-                                icon: "sparkles",
-                                color: .blue
-                            ) {
-                                withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
-                                    selectedAction = "clean"
-                                }
-                                
-                                // Add haptic feedback
-                                let impactMed = UIImpactFeedbackGenerator(style: .medium)
-                                impactMed.impactOccurred()
-                                
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) {
-                                    viewModel.cleanManul()
-                                    selectedAction = nil
-                                }
-                            }
-                            
-                            CircleActionButton(
-                                icon: "heart.fill",
-                                color: .red
-                            ) {
-                                withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
-                                    selectedAction = "play"
-                                }
-                                
-                                // Add haptic feedback
-                                let impactMed = UIImpactFeedbackGenerator(style: .medium)
-                                impactMed.impactOccurred()
-                                
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) {
-                                    viewModel.playWithManul()
-                                    selectedAction = nil
-                                }
-                            }
-                            
-                            // Add certificate button here
-                            CircleActionButton(
-                                icon: "doc.badge.fill",
-                                color: .purple
-                            ) {
-                                showingCertificate = true
-                            }
-                        }
-                        .padding(.bottom, 16)
-                    }
-                    .padding(.bottom, 20)
-                }
-                
-                // =================================================================
-                // FIXED OVERLAY ELEMENTS THAT DON'T AFFECT LAYOUT
-                // =================================================================
-                
-                // Top status bar - Fixed at top and doesn't participate in layout flow
-                VStack(spacing: 0) {
-                    HStack(spacing: 0) {
-                        // Level badge with XP
-                        HStack(spacing: 6) {
-                            ZStack {
-                                Circle()
-                                    .fill(accentColor)
-                                    .frame(width: 36, height: 36)
-                                
-                                Text("\(viewModel.manul.level)")
-                                    .font(.system(size: 18, weight: .bold, design: .rounded))
-                                    .foregroundColor(.white)
-                            }
-                            
-                            // Simple XP bar
-                            let xpNeededForNextLevel = viewModel.manul.level * 100
-                            let xpProgress = min(1.0, Double(viewModel.manul.xp) / Double(xpNeededForNextLevel))
-                            
-                            ZStack(alignment: .leading) {
-                                Capsule()
-                                    .fill(Color.black.opacity(0.15))
-                                    .frame(width: 60, height: 6)
-                                
-                                Capsule()
-                                    .fill(Color.white.opacity(0.9))
-                                    .frame(width: max(0, CGFloat(xpProgress) * 60), height: 6)
-                            }
-                        }
-                        .padding(.vertical, 10)
-                        .padding(.horizontal, 12)
-                        .background(Capsule().fill(Color.white.opacity(0.3)))
-                        
-                        Spacer()
-                        
-                        // Toggle button for stats panel
-                        Button(action: {
-                            withAnimation(.spring()) {
-                                isStatsExpanded.toggle()
-                            }
-                        }) {
-                            Image(systemName: isStatsExpanded ? "chevron.up" : "chevron.down")
-                                .foregroundColor(.white)
-                                .padding(10)
-                                .background(Circle().fill(Color.black.opacity(0.3)))
-                        }
-                        .padding(.horizontal, 10)
-                        
-                        Spacer()
-                        
-                        // Coins currency - now matching level indicator's style
-                        HStack(spacing: 6) {
-                            ZStack {
-                                Circle()
-                                    .fill(Color.yellow.opacity(0.8))
-                                    .frame(width: 36, height: 36)
-                                
-                                Image(systemName: "dollarsign.circle")
-                                    .foregroundColor(.white)
-                                    .font(.system(size: 18, weight: .bold))
-                            }
-                            
-                            Text("\(viewModel.manul.coins)")
-                                .font(.system(size: 18, weight: .bold, design: .rounded))
-                                .foregroundColor(.white)
-                        }
-                        .padding(.vertical, 10)
-                        .padding(.horizontal, 12)
-                        .background(Capsule().fill(Color.white.opacity(0.3)))
-                    }
-                    .padding(.horizontal, 16)
-                    .padding(.top, 12)
-                    
-                    // Stats panel overlay - positioned absolutely
-                    if isStatsExpanded {
-                        // Semi-transparent background panel that expands from the top
-                        VStack(spacing: 0) {
-                            // Background panel with gradient
-                            Rectangle()
-                                .fill(
-                                    LinearGradient(
-                                        gradient: Gradient(colors: [
-                                            Color.black.opacity(0.2),
-                                            Color.black.opacity(0.0)
-                                        ]),
-                                        startPoint: .top,
-                                        endPoint: .bottom
-                                    )
+                                .stroke(Color.gray.opacity(0.3), lineWidth: 2)
+                                .background(
+                                    Circle()
+                                        .fill(
+                                            RadialGradient(
+                                                gradient: Gradient(colors: [
+                                                    Color(red: 0.85, green: 0.82, blue: 0.7),
+                                                    Color(red: 0.78, green: 0.75, blue: 0.62)
+                                                ]),
+                                                center: .center,
+                                                startRadius: 0,
+                                                endRadius: 150
+                                            )
+                                        )
                                 )
-                                .frame(height: 130)
-                            
-                            // Stats cards
-                            HStack(spacing: 12) {
-                                // Happiness stat
-                                StatCard(
-                                    icon: "heart.fill",
-                                    iconColor: .red,
-                                    label: "Happiness",
-                                    value: viewModel.manul.happiness,
-                                    color: .red
-                                )
-                                
-                                // Hunger stat
-                                StatCard(
-                                    icon: "fork.knife",
-                                    iconColor: .orange,
-                                    label: "Hunger",
-                                    value: viewModel.manul.hunger,
-                                    color: .orange
-                                )
-                                
-                                // Hygiene stat
-                                StatCard(
-                                    icon: "sparkles",
-                                    iconColor: .blue,
-                                    label: "Hygiene",
-                                    value: viewModel.manul.hygiene,
-                                    color: .blue
-                                )
-                            }
-                            .padding(.horizontal, 16)
-                            .padding(.vertical, 8)
-                            .offset(y: -70)
-                        }
-                        .transition(.opacity.combined(with: .move(edge: .top)))
-                    }
-                }
-                .zIndex(100) // Ensure the top bar is always on top
-                
-                // Toast message overlay
-                if viewModel.showInteractionFeedback {
-                    VStack {
-                        FeedbackToast(
-                            message: viewModel.interactionFeedback,
-                            interactionType: viewModel.lastInteractionType
+                                .clipShape(Circle())
                         )
-                        .padding(.horizontal, 16)
-                        .padding(.top, 70) // Position below the top bar
+                    
+                    // Rock formation
+                    ZStack {
+                        Path { path in
+                            path.move(to: CGPoint(x: -50, y: 20))
+                            path.addQuadCurve(
+                                to: CGPoint(x: -10, y: -40),
+                                control: CGPoint(x: -40, y: -30)
+                            )
+                            path.addQuadCurve(
+                                to: CGPoint(x: 30, y: -20),
+                                control: CGPoint(x: 20, y: -50)
+                            )
+                            path.addQuadCurve(
+                                to: CGPoint(x: 50, y: 10),
+                                control: CGPoint(x: 50, y: -10)
+                            )
+                            path.addQuadCurve(
+                                to: CGPoint(x: 20, y: 30),
+                                control: CGPoint(x: 45, y: 30)
+                            )
+                            path.addQuadCurve(
+                                to: CGPoint(x: -50, y: 20),
+                                control: CGPoint(x: -10, y: 50)
+                            )
+                        }
+                        .fill(
+                            LinearGradient(
+                                gradient: Gradient(colors: [
+                                    Color(red: 0.6, green: 0.55, blue: 0.5),
+                                    Color(red: 0.5, green: 0.45, blue: 0.4)
+                                ]),
+                                startPoint: .top,
+                                endPoint: .bottom
+                            )
+                        )
                         
-                        Spacer()
+                        Circle()
+                            .fill(Color(red: 0.55, green: 0.5, blue: 0.45))
+                            .frame(width: 25, height: 18)
+                            .offset(x: -60, y: 10)
+                        
+                        Ellipse()
+                            .fill(Color(red: 0.6, green: 0.55, blue: 0.5))
+                            .frame(width: 35, height: 20)
+                            .offset(x: 60, y: 15)
+                            .rotationEffect(.degrees(15))
+                        
+                        Path { path in
+                            path.move(to: CGPoint(x: -20, y: -20))
+                            path.addLine(to: CGPoint(x: 0, y: -15))
+                            path.addLine(to: CGPoint(x: -10, y: -5))
+                        }
+                        .stroke(Color.gray.opacity(0.5), lineWidth: 1)
+                        
+                        Path { path in
+                            path.move(to: CGPoint(x: 10, y: 0))
+                            path.addLine(to: CGPoint(x: 30, y: 10))
+                        }
+                        .stroke(Color.gray.opacity(0.4), lineWidth: 1)
+                        
+                        Text("Rock Formation\nPlaceholder")
+                            .font(.system(size: 8))
+                            .foregroundColor(.white.opacity(0.6))
+                            .multilineTextAlignment(.center)
+                            .offset(y: -5)
                     }
-                    .transition(.move(edge: .top).combined(with: .opacity))
-                    .animation(.spring(response: 0.4, dampingFraction: 0.7), value: viewModel.showInteractionFeedback)
-                    .zIndex(101) // Above everything else
+                    .frame(width: 150, height: 100)
+                    .offset(y: 30)
+                    
+                    // Manul character
+                    ManulView(mood: viewModel.manul.mood, wearingItems: viewModel.manul.wearingItems, scaleFactor: 0.3)
+                        .offset(x: habitatOffset, y: -15)
+                        .gesture(
+                            DragGesture()
+                                .onChanged { value in
+                                    self.isHabitatDragging = true
+                                    let horizontalDragLimit: CGFloat = 40
+                                    self.habitatOffset = min(horizontalDragLimit, max(-horizontalDragLimit, value.translation.width / 3))
+                                }
+                                .onEnded { _ in
+                                    withAnimation(.spring()) {
+                                        self.habitatOffset = 0
+                                        self.isHabitatDragging = false
+                                    }
+                                }
+                        )
+                        .scaleEffect(isHabitatDragging ? 0.95 : 1.0)
+                        .animation(.spring(response: 0.3), value: isHabitatDragging)
+                    
+                    // Placed decorations
+                    ForEach(viewModel.placedItems) { item in
+                        if let position = item.position {
+                            PlacedItemView(item: item)
+                                .position(position)
+                        }
+                    }
+                    
+                    // Action animations
+                    if let action = selectedAction {
+                        actionAnimation(for: action)
+                            .offset(y: -50)
+                    }
+                    
+                    // Grass tufts
+                    ForEach(0..<8) { i in
+                        let angle = Double(i) * .pi / 4
+                        let radius = 130.0
+                        let x = cos(angle) * radius
+                        let y = sin(angle) * radius
+                        
+                        GrassTuft()
+                            .offset(x: CGFloat(x), y: CGFloat(y))
+                            .rotationEffect(.degrees(Double(i * 45)))
+                    }
                 }
+                .frame(maxHeight: .infinity)
+                
+                // Bottom action area
+                VStack(spacing: 8) {
+                    // Name and mood
+                    HStack(spacing: 6) {
+                        Image(systemName: moodIcon(for: viewModel.manul.mood))
+                            .foregroundColor(moodColor(for: viewModel.manul.mood))
+                        
+                        Text(viewModel.manul.name)
+                            .font(.system(size: 20, weight: .bold, design: .rounded))
+                            .foregroundColor(.white)
+                        
+                        Text("• \(moodText(for: viewModel.manul.mood))")
+                            .font(.system(size: 16, weight: .medium, design: .rounded))
+                            .foregroundColor(.white.opacity(0.8))
+                    }
+                    .padding(.vertical, 8)
+                    
+                    // Action buttons
+                    HStack(spacing: geometry.size.width * 0.08) {
+                        CircleActionButton(
+                            icon: "fork.knife",
+                            color: .orange
+                        ) {
+                            showingFoodSelection = true
+                        }
+                        
+                        CircleActionButton(
+                            icon: "sparkles",
+                            color: .blue
+                        ) {
+                            withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
+                                selectedAction = "clean"
+                            }
+                            
+                            let impactMed = UIImpactFeedbackGenerator(style: .medium)
+                            impactMed.impactOccurred()
+                            
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) {
+                                viewModel.cleanManul()
+                                selectedAction = nil
+                            }
+                        }
+                        
+                        CircleActionButton(
+                            icon: "heart.fill",
+                            color: .red
+                        ) {
+                            withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
+                                selectedAction = "play"
+                            }
+                            
+                            let impactMed = UIImpactFeedbackGenerator(style: .medium)
+                            impactMed.impactOccurred()
+                            
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) {
+                                viewModel.playWithManul()
+                                selectedAction = nil
+                            }
+                        }
+                        
+                        CircleActionButton(
+                            icon: "doc.badge.fill",
+                            color: .purple
+                        ) {
+                            showingCertificate = true
+                        }
+                    }
+                    .padding(.bottom, 16)
+                }
+                .padding(.bottom, 20)
+            }
+            
+            // =====================================
+            // FIXED OVERLAY LAYERS
+            // =====================================
+            
+            // Top header - positioned absolutely using frame and offset
+            HStack(spacing: 0) {
+                // Level and XP
+                HStack(spacing: 6) {
+                    ZStack {
+                        Circle()
+                            .fill(accentColor)
+                            .frame(width: 36, height: 36)
+                        
+                        Text("\(viewModel.manul.level)")
+                            .font(.system(size: 18, weight: .bold, design: .rounded))
+                            .foregroundColor(.white)
+                    }
+                    
+                    let xpNeededForNextLevel = viewModel.manul.level * 100
+                    let xpProgress = min(1.0, Double(viewModel.manul.xp) / Double(xpNeededForNextLevel))
+                    
+                    ZStack(alignment: .leading) {
+                        Capsule()
+                            .fill(Color.black.opacity(0.15))
+                            .frame(width: 60, height: 6)
+                        
+                        Capsule()
+                            .fill(Color.white.opacity(0.9))
+                            .frame(width: max(0, CGFloat(xpProgress) * 60), height: 6)
+                    }
+                }
+                .padding(.vertical, 10)
+                .padding(.horizontal, 12)
+                .background(Capsule().fill(Color.white.opacity(0.3)))
+                
+                Spacer()
+                
+                // Stats toggle
+                Button(action: {
+                    withAnimation(.spring()) {
+                        isStatsExpanded.toggle()
+                    }
+                }) {
+                    Image(systemName: isStatsExpanded ? "chevron.up" : "chevron.down")
+                        .foregroundColor(.white)
+                        .padding(10)
+                        .background(Circle().fill(Color.black.opacity(0.3)))
+                }
+                .padding(.horizontal, 10)
+                
+                Spacer()
+                
+                // Coins
+                HStack(spacing: 6) {
+                    ZStack {
+                        Circle()
+                            .fill(Color.yellow.opacity(0.8))
+                            .frame(width: 36, height: 36)
+                        
+                        Image(systemName: "dollarsign.circle")
+                            .foregroundColor(.white)
+                            .font(.system(size: 18, weight: .bold))
+                    }
+                    
+                    Text("\(viewModel.manul.coins)")
+                        .font(.system(size: 18, weight: .bold, design: .rounded))
+                        .foregroundColor(.white)
+                }
+                .padding(.vertical, 10)
+                .padding(.horizontal, 12)
+                .background(Capsule().fill(Color.white.opacity(0.3)))
+            }
+            .padding(.horizontal, 16)
+            .padding(.top, 12)
+            .frame(width: geometry.size.width)
+            .position(x: geometry.size.width/2, y: 40)
+            
+            // Stats panel - absolutely positioned using .position
+            if isStatsExpanded {
+                StatsPanel(
+                    happiness: viewModel.manul.happiness,
+                    hunger: viewModel.manul.hunger,
+                    hygiene: viewModel.manul.hygiene
+                )
+                .frame(width: geometry.size.width - 32)
+                .position(x: geometry.size.width/2, y: 130)
+                .transition(.opacity)
+            }
+            
+            // Toast message overlay
+            if viewModel.showInteractionFeedback {
+                FeedbackToast(
+                    message: viewModel.interactionFeedback,
+                    interactionType: viewModel.lastInteractionType
+                )
+                .padding(.horizontal, 16)
+                .frame(width: geometry.size.width)
+                .position(x: geometry.size.width/2, y: 90)
+                .transition(.move(edge: .top).combined(with: .opacity))
+                .animation(.spring(response: 0.4, dampingFraction: 0.7), value: viewModel.showInteractionFeedback)
             }
         }
         .sheet(isPresented: $showingFoodSelection) {
@@ -428,7 +368,6 @@ struct HomeView: View {
                     selectedAction = "feed"
                 }
                 
-                // Add haptic feedback
                 let impactMed = UIImpactFeedbackGenerator(style: .medium)
                 impactMed.impactOccurred()
                 
@@ -459,7 +398,8 @@ struct HomeView: View {
         }
     }
     
-    // Helper functions for mood indicators
+    // MARK: - Helper functions
+    
     private func moodIcon(for mood: Manul.Mood) -> String {
         switch mood {
         case .happy: return "face.smiling"
@@ -487,7 +427,6 @@ struct HomeView: View {
         }
     }
     
-    // Animation helper
     private func actionAnimation(for action: String) -> some View {
         Group {
             switch action {
@@ -507,10 +446,8 @@ struct HomeView: View {
                     .scaleEffect(1.2)
                     .animation(.easeInOut(duration: 0.5).repeatForever(autoreverses: true), value: selectedAction)
             case "play":
-                // Check if a toy is equipped
                 if let selectedToyId = viewModel.selectedToy,
                    let selectedToy = viewModel.inventory.first(where: { $0.id == selectedToyId }) {
-                    // Show the specific toy
                     ZStack {
                         Circle()
                             .fill(Color.yellow.opacity(0.3))
@@ -523,7 +460,6 @@ struct HomeView: View {
                     .scaleEffect(1.2)
                     .animation(.easeInOut(duration: 0.5).repeatForever(autoreverses: true), value: selectedAction)
                 } else {
-                    // Default heart animation if no toy is selected
                     Image(systemName: "heart.fill")
                         .font(.system(size: 50))
                         .foregroundColor(.red)
@@ -537,31 +473,6 @@ struct HomeView: View {
         }
     }
     
-    // Helper for feedback icons
-    private func feedbackIcon(for interactionType: String) -> String {
-        switch interactionType {
-        case "feed": return "fork.knife"
-        case "clean": return "sparkles"
-        case "play": return "heart.fill"
-        case "purchase_success": return "cart.fill.badge.plus"
-        case "place_item", "remove_item": return "chair.fill"
-        default: return "info.circle"
-        }
-    }
-    
-    // Helper for feedback colors
-    private func feedbackColor(for interactionType: String) -> Color {
-        switch interactionType {
-        case "feed": return .orange
-        case "clean": return .blue
-        case "play": return .red
-        case "purchase_success": return .green
-        case "place_item", "remove_item": return .purple
-        default: return .gray
-        }
-    }
-    
-    // Add missing helper functions
     private func iconFor(_ item: Item) -> String {
         switch item.type {
         case .food: return "fork.knife"
@@ -591,21 +502,57 @@ struct HomeView: View {
     }
 }
 
-// Cleaner stat card design for the expandable stats display
-struct StatCard: View {
+// MARK: - Supporting Views
+
+// Stats panel with simplified look
+struct StatsPanel: View {
+    let happiness: Double
+    let hunger: Double
+    let hygiene: Double
+    
+    var body: some View {
+        HStack(spacing: 12) {
+            // Happiness stat
+            StatItem(
+                icon: "heart.fill", 
+                label: "Happiness", 
+                value: happiness,
+                color: .red
+            )
+            
+            // Hunger stat
+            StatItem(
+                icon: "fork.knife", 
+                label: "Hunger", 
+                value: hunger,
+                color: .orange
+            )
+            
+            // Hygiene stat
+            StatItem(
+                icon: "sparkles", 
+                label: "Hygiene", 
+                value: hygiene,
+                color: .blue
+            )
+        }
+        .padding(.horizontal, 16)
+    }
+}
+
+// Individual stat item
+struct StatItem: View {
     let icon: String
-    let iconColor: Color
     let label: String
     let value: Double
     let color: Color
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
+        VStack(alignment: .leading, spacing: 4) {
             // Label and icon
             HStack(spacing: 6) {
                 Image(systemName: icon)
-                    .foregroundColor(iconColor)
-                    .font(.system(size: 14))
+                    .foregroundColor(color)
                 
                 Text(label)
                     .font(.system(size: 14, weight: .medium, design: .rounded))
@@ -614,102 +561,25 @@ struct StatCard: View {
             
             // Progress bar
             ZStack(alignment: .leading) {
-                RoundedRectangle(cornerRadius: 4)
+                RoundedRectangle(cornerRadius: 5)
                     .fill(Color.white.opacity(0.3))
-                    .frame(height: 8)
+                    .frame(height: 10)
                 
-                RoundedRectangle(cornerRadius: 4)
+                RoundedRectangle(cornerRadius: 5)
                     .fill(color)
-                    .frame(width: max(5, CGFloat(value) * 100), height: 8)
+                    .frame(width: max(5, CGFloat(value) * 100), height: 10)
             }
         }
         .padding(12)
-        .frame(maxWidth: .infinity)
         .background(
             RoundedRectangle(cornerRadius: 12)
-                .fill(Color.white.opacity(0.2))
+                .fill(Color.black.opacity(0.2))
         )
+        .frame(maxWidth: .infinity)
     }
 }
 
-// New compact resource indicator
-struct ResourceIndicator: View {
-    let icon: String
-    let value: String
-    let color: Color
-    
-    var body: some View {
-        HStack(spacing: 4) {
-            Image(systemName: icon)
-                .foregroundColor(color)
-                .font(.system(size: 12, weight: .bold))
-            
-            Text(value)
-                .font(.system(size: 12, weight: .bold, design: .rounded))
-                .foregroundColor(.white)
-        }
-        .padding(.vertical, 4)
-        .padding(.horizontal, 8)
-        .background(Capsule().fill(Color.black.opacity(0.2)))
-    }
-}
-
-// Circle action button for minimalist design
-struct CircleActionButton: View {
-    let icon: String
-    let color: Color
-    let action: () -> Void
-    
-    var body: some View {
-        Button(action: action) {
-            ZStack {
-                Circle()
-                    .fill(Color.white.opacity(0.9))
-                    .frame(width: 60, height: 60)
-                    .shadow(color: color.opacity(0.3), radius: 5, x: 0, y: 2)
-                
-                Image(systemName: icon)
-                    .font(.system(size: 24))
-                    .foregroundColor(color)
-            }
-        }
-    }
-}
-
-// Expandable view component
-struct ExpandableView<Content: View>: View {
-    @State private var isExpanded = false
-    let content: Content
-    
-    init(@ViewBuilder content: () -> Content) {
-        self.content = content()
-    }
-    
-    var body: some View {
-        VStack(spacing: 0) {
-            // Pull tab
-            Button(action: {
-                withAnimation(.spring()) {
-                    isExpanded.toggle()
-                }
-            }) {
-                Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
-                    .foregroundColor(.white)
-                    .padding(8)
-                    .background(Capsule().fill(Color.black.opacity(0.3)))
-                    .padding(.top, 4)
-            }
-            
-            if isExpanded {
-                content
-                    .padding(.top, 8)
-                    .transition(.move(edge: .top).combined(with: .opacity))
-            }
-        }
-    }
-}
-
-// Feedback toast component
+// Toast message
 struct FeedbackToast: View {
     let message: String
     let interactionType: String
@@ -765,9 +635,52 @@ struct FeedbackToast: View {
     }
 }
 
-// Previous ImprovedActionButton is no longer needed with new design
+// Action button
+struct CircleActionButton: View {
+    let icon: String
+    let color: Color
+    let action: () -> Void
+    
+    var body: some View {
+        Button(action: action) {
+            ZStack {
+                Circle()
+                    .fill(Color.white.opacity(0.9))
+                    .frame(width: 60, height: 60)
+                    .shadow(color: color.opacity(0.3), radius: 5, x: 0, y: 2)
+                
+                Image(systemName: icon)
+                    .font(.system(size: 24))
+                    .foregroundColor(color)
+            }
+        }
+    }
+}
 
-// Improved certificate view
+// Grass tuft
+struct GrassTuft: View {
+    var body: some View {
+        ZStack {
+            // Multiple blades of grass
+            ForEach(0..<3) { i in
+                Path { path in
+                    path.move(to: CGPoint(x: CGFloat(i) * 3 - 3, y: 0))
+                    path.addQuadCurve(
+                        to: CGPoint(x: CGFloat(i) * 3 - 6, y: -10 - CGFloat(i) * 3),
+                        control: CGPoint(x: CGFloat(i) * 3 - 7, y: -5)
+                    )
+                }
+                .stroke(
+                    Color(red: 0.5, green: 0.65, blue: 0.3),
+                    style: StrokeStyle(lineWidth: 1.5, lineCap: .round)
+                )
+            }
+        }
+        .frame(width: 10, height: 15)
+    }
+}
+
+// Certificate view remains the same
 struct CertificateView: View {
     let certificate: UIImage
     @Environment(\.presentationMode) var presentationMode
@@ -793,8 +706,6 @@ struct CertificateView: View {
             
             HStack(spacing: 20) {
                 Button(action: {
-                    // Share sheet implementation would go here
-                    // For now just provide haptic feedback
                     let impactMed = UIImpactFeedbackGenerator(style: .medium)
                     impactMed.impactOccurred()
                 }) {
@@ -838,7 +749,7 @@ struct CertificateView: View {
     }
 }
 
-// Food selection view
+// Food selection view remains the same
 struct FoodSelectionView: View {
     @EnvironmentObject var viewModel: ManulViewModel
     @Environment(\.presentationMode) var presentationMode
@@ -970,28 +881,5 @@ struct FoodSelectionView: View {
         default:
             return .gray
         }
-    }
-}
-
-// Add a new component for grass tufts
-struct GrassTuft: View {
-    var body: some View {
-        ZStack {
-            // Multiple blades of grass
-            ForEach(0..<3) { i in
-                Path { path in
-                    path.move(to: CGPoint(x: CGFloat(i) * 3 - 3, y: 0))
-                    path.addQuadCurve(
-                        to: CGPoint(x: CGFloat(i) * 3 - 6, y: -10 - CGFloat(i) * 3),
-                        control: CGPoint(x: CGFloat(i) * 3 - 7, y: -5)
-                    )
-                }
-                .stroke(
-                    Color(red: 0.5, green: 0.65, blue: 0.3),
-                    style: StrokeStyle(lineWidth: 1.5, lineCap: .round)
-                )
-            }
-        }
-        .frame(width: 10, height: 15)
     }
 } 
