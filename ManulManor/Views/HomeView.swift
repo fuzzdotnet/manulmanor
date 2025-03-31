@@ -154,16 +154,15 @@ struct HomeView: View {
                         // Habitat background
                         RoundedRectangle(cornerRadius: 30)
                             .fill(primaryColor.opacity(0.5))
-                            .frame(height: geometry.size.height * 0.45)
+                            // Removed explicit frame height, rely on ZStack content + padding
                             .overlay(
                                 RoundedRectangle(cornerRadius: 30)
                                     .stroke(accentColor.opacity(0.2), lineWidth: 1)
                             )
-                            .padding(.horizontal, 16)
                         
-                        // Manul view with improved visuals
+                        // Manul view with reduced size
                         ManulView(mood: viewModel.manul.mood)
-                            .frame(width: 220, height: 220)
+                            .frame(width: 75, height: 75) // Reduced size
                             .offset(x: habitatOffset)
                             .gesture(
                                 DragGesture()
@@ -181,33 +180,29 @@ struct HomeView: View {
                             )
                             .scaleEffect(isHabitatDragging ? 0.95 : 1.0)
                             .animation(.spring(response: 0.3), value: isHabitatDragging)
+                            // Add some padding below the manul
+                            .padding(.bottom, 20)
                         
-                        // Placed decorations with improved visuals
+                        // Placed decorations
                         ForEach(viewModel.placedItems) { item in
                             if let position = item.position {
-                                // This would be the actual item image in the final version
-                                ZStack {
-                                    Circle()
-                                        .fill(Color.white)
-                                        .frame(width: 50, height: 50)
-                                        .shadow(color: Color.black.opacity(0.2), radius: 3, x: 0, y: 2)
-                                    
-                                    Image(systemName: iconFor(item))
-                                        .font(.system(size: 25))
-                                        .foregroundColor(colorFor(item: item))
-                                }
-                                .position(position)
-                                .shadow(color: Color.black.opacity(0.1), radius: 2, x: 0, y: 2)
+                                PlacedItemView(item: item)
+                                    .position(position)
+                                    // Removed redundant shadow
                             }
                         }
                         
                         // Animation for actions
                         if let action = selectedAction {
                             actionAnimation(for: action)
-                                .position(x: geometry.size.width / 2, y: geometry.size.height * 0.25)
+                                .position(x: geometry.size.width / 2, y: geometry.size.height * 0.25) 
                         }
                     }
-                    .frame(height: geometry.size.height * 0.45)
+                    // Apply frame to the ZStack instead of just the background
+                    // Use a fixed height for consistency, adjust padding
+                    .frame(height: 300) 
+                    .padding(.horizontal, 16) // Maintain horizontal padding
+                    .padding(.vertical, 10) // Add some vertical padding
                     
                     // Manul name and mood with improved visuals
                     VStack(spacing: 4) {

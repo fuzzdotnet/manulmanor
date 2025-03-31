@@ -6,7 +6,6 @@ struct InventoryView: View {
     @State private var draggedItem: Item?
     @State private var isDragging = false
     @State private var dragPosition = CGPoint.zero // Use global coordinates for drag position
-    @State private var foodForSheet: Item?
     @State private var habitatFrame: CGRect = .zero // Store the habitat frame
     @State private var trashFrame: CGRect = .zero // Store the trash area frame
     @State private var isOverTrash: Bool = false // Track if drag is over trash
@@ -39,7 +38,8 @@ struct InventoryView: View {
                 // Category selector
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 15) {
-                        ForEach(Item.ItemType.allCases, id: \.self) { category in
+                        // Filter out the .food category
+                        ForEach(Item.ItemType.allCases.filter { $0 != .food }, id: \.self) { category in
                             CategoryButton(
                                 title: category.displayName,
                                 isSelected: category == selectedCategory,
@@ -116,6 +116,11 @@ struct InventoryView: View {
                          // Update frame if layout changes
                         self.habitatFrame = newFrame
                     }
+                    
+                    // Add Manul view inside the habitat ZStack
+                    ManulView(mood: viewModel.manul.mood) // Use the view model's manul
+                        .frame(width: 75, height: 75) // Reduced size
+                        .allowsHitTesting(false) // Don't let it interfere with drag/drop
                 }
                 .frame(height: 300) // Give GeometryReader a defined height
                 
@@ -184,13 +189,6 @@ struct InventoryView: View {
                     .padding()
                 }
             }
-            .sheet(item: $foodForSheet) { food in
-                FeedConfirmationView(food: food) { confirmed in
-                    if confirmed {
-                        viewModel.feedManul(with: food)
-                    }
-                }
-            }
             
             // Show the dragged item overlay using global position
             if let item = draggedItem, isDragging {
@@ -226,15 +224,7 @@ struct InventoryView: View {
     }
     
     private func handleItemTap(_ item: Item) {
-        if item.type == .food {
-            // Make sure the food item can be used (has quantity > 0 or is grasshoppers)
-            if item.id == "food_grasshoppers" || viewModel.getItemQuantity(item.id) > 0 {
-                foodForSheet = item
-            } else {
-                // Show feedback that item is out of stock
-                viewModel.showFeedback("No \(item.name) left in inventory!", interactionType: "info")
-            }
-        } else if item.type == .hat || item.type == .accessory {
+        if item.type == .hat || item.type == .accessory {
             // For wearable items, toggle wearing
             if viewModel.manul.wearingItems.contains(item.id) {
                 viewModel.removeWornItem(item)
