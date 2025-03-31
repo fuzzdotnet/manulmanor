@@ -70,13 +70,85 @@ struct InventoryView: View {
                 // Placeable area using GeometryReader to get frame
                 GeometryReader { geometry in
                     ZStack {
-                        RoundedRectangle(cornerRadius: 20)
-                            .fill(Color.gray.opacity(0.2))
-                            .frame(height: 300)
+                        // Circular habitat ground - matching HomeView style
+                        Circle()
+                            .fill(Color(red: 0.82, green: 0.78, blue: 0.67))
+                            .shadow(color: Color.black.opacity(0.2), radius: 10, x: 0, y: 5)
+                            .overlay(
+                                Circle()
+                                    .stroke(Color.gray.opacity(0.3), lineWidth: 2)
+                                    .background(
+                                        Circle()
+                                            .fill(
+                                                RadialGradient(
+                                                    gradient: Gradient(colors: [
+                                                        Color(red: 0.85, green: 0.82, blue: 0.7),
+                                                        Color(red: 0.78, green: 0.75, blue: 0.62)
+                                                    ]),
+                                                    center: .center,
+                                                    startRadius: 0,
+                                                    endRadius: 150
+                                                )
+                                            )
+                                    )
+                                    .clipShape(Circle())
+                            )
+                        
+                        // Rock formation - simplified version for inventory preview
+                        ZStack {
+                            Path { path in
+                                path.move(to: CGPoint(x: -30, y: 10))
+                                path.addQuadCurve(
+                                    to: CGPoint(x: -5, y: -20),
+                                    control: CGPoint(x: -20, y: -15)
+                                )
+                                path.addQuadCurve(
+                                    to: CGPoint(x: 15, y: -10),
+                                    control: CGPoint(x: 10, y: -25)
+                                )
+                                path.addQuadCurve(
+                                    to: CGPoint(x: 25, y: 5),
+                                    control: CGPoint(x: 25, y: -5)
+                                )
+                                path.addQuadCurve(
+                                    to: CGPoint(x: 10, y: 15),
+                                    control: CGPoint(x: 22, y: 15)
+                                )
+                                path.addQuadCurve(
+                                    to: CGPoint(x: -30, y: 10),
+                                    control: CGPoint(x: -5, y: 25)
+                                )
+                            }
+                            .fill(
+                                LinearGradient(
+                                    gradient: Gradient(colors: [
+                                        Color(red: 0.6, green: 0.55, blue: 0.5),
+                                        Color(red: 0.5, green: 0.45, blue: 0.4)
+                                    ]),
+                                    startPoint: .top,
+                                    endPoint: .bottom
+                                )
+                            )
+                        }
+                        .frame(width: 75, height: 50)
+                        .offset(y: 15)
                         
                         // Add Manul view centered in the habitat
                         ManulView(mood: viewModel.manul.mood, scaleFactor: 0.22)
                             .allowsHitTesting(false)
+                        
+                        // Grass tufts for visual cues around the perimeter
+                        ForEach(0..<6) { i in
+                            let angle = Double(i) * .pi / 3
+                            let radius = min(geometry.size.width, 300) * 0.35 // Scale to fit the area
+                            let x = cos(angle) * radius
+                            let y = sin(angle) * radius
+                            
+                            GrassTuft()
+                                .frame(width: 15, height: 15)
+                                .offset(x: CGFloat(x), y: CGFloat(y))
+                                .rotationEffect(.degrees(Double(i * 60)))
+                        }
                         
                         // Display placed items
                         ForEach(viewModel.placedItems.filter { $0.type == .furniture || $0.type == .decoration }) { item in
@@ -130,6 +202,26 @@ struct InventoryView: View {
                                     )
                             }
                         }
+                        
+                        // Light grid pattern overlay to help with positioning
+                        ZStack {
+                            ForEach(-3...3, id: \.self) { x in
+                                Path { path in
+                                    path.move(to: CGPoint(x: CGFloat(x) * 30, y: -90))
+                                    path.addLine(to: CGPoint(x: CGFloat(x) * 30, y: 90))
+                                }
+                                .stroke(Color.black.opacity(0.05), lineWidth: 0.5)
+                            }
+                            
+                            ForEach(-3...3, id: \.self) { y in
+                                Path { path in
+                                    path.move(to: CGPoint(x: -90, y: CGFloat(y) * 30))
+                                    path.addLine(to: CGPoint(x: 90, y: CGFloat(y) * 30))
+                                }
+                                .stroke(Color.black.opacity(0.05), lineWidth: 0.5)
+                            }
+                        }
+                        .clipShape(Circle())
                     }
                     .frame(maxWidth: .infinity) // Use full width within GeometryReader
                     .onAppear {
@@ -362,5 +454,29 @@ struct FeedConfirmationView: View {
             .padding(.top, 20)
         }
         .padding()
+    }
+}
+
+// Simple grass tuft view for habitat decoration
+struct GrassTuft: View {
+    var body: some View {
+        VStack(spacing: -2) {
+            ForEach(0..<3) { i in
+                let width: CGFloat = CGFloat(3 - i) * 4
+                let height: CGFloat = CGFloat(3 - i) * 8
+                
+                Path { path in
+                    path.move(to: CGPoint(x: -width/2, y: 0))
+                    path.addQuadCurve(
+                        to: CGPoint(x: width/2, y: 0),
+                        control: CGPoint(x: 0, y: -height)
+                    )
+                }
+                .stroke(
+                    Color(red: 0.3, green: 0.6, blue: 0.2).opacity(0.8 + CGFloat(i) * 0.1),
+                    lineWidth: 1
+                )
+            }
+        }
     }
 } 
