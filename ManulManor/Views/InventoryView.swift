@@ -6,6 +6,7 @@ struct InventoryView: View {
     @State private var draggedItem: Item?
     @State private var isDragging = false
     @State private var dragPosition = CGPoint.zero // Use global coordinates for drag position
+    @State private var dragOffset = CGPoint.zero // Store the offset from finger to item center
     @State private var habitatFrame: CGRect = .zero // Store the habitat frame
     @State private var trashFrame: CGRect = .zero // Store the trash area frame
     @State private var isOverTrash: Bool = false // Track if drag is over trash
@@ -90,7 +91,11 @@ struct InventoryView: View {
                                                 if !isDragging {
                                                     self.draggedItem = item
                                                     self.isDragging = true
-                                                    self.dragPosition = value.startLocation 
+                                                    self.dragPosition = value.location
+                                                    
+                                                    // Calculate a small offset so the item appears under the finger
+                                                    // Use a consistent offset for better user experience
+                                                    self.dragOffset = CGPoint(x: 0, y: -30) // Position item a bit above finger
                                                 } else {
                                                     self.dragPosition = value.location
                                                 }
@@ -120,6 +125,7 @@ struct InventoryView: View {
                                                 self.draggedItem = nil
                                                 self.isDragging = false
                                                 self.isOverTrash = false // Reset trash highlight
+                                                self.dragOffset = .zero // Reset drag offset
                                             }
                                     )
                             }
@@ -171,7 +177,11 @@ struct InventoryView: View {
                                             if !isDragging {
                                                 self.draggedItem = item // Set the item being dragged
                                                 self.isDragging = true
-                                                self.dragPosition = value.startLocation
+                                                self.dragPosition = value.location
+                                                
+                                                // Calculate a small offset so the item appears under the finger
+                                                // Use a consistent offset for better user experience
+                                                self.dragOffset = CGPoint(x: 0, y: -30) // Position item a bit above finger
                                             } else {
                                                 self.dragPosition = value.location
                                             }
@@ -200,6 +210,7 @@ struct InventoryView: View {
                                             self.draggedItem = nil
                                             self.isDragging = false
                                             self.isOverTrash = false // Reset trash highlight
+                                            self.dragOffset = .zero // Reset drag offset
                                         }
                                     : nil // No gesture for non-draggable items
                                 )
@@ -217,8 +228,14 @@ struct InventoryView: View {
             
             // Show the dragged item overlay using global position
             if let item = draggedItem, isDragging {
+                 // Apply the offset to position item under the finger
+                 let adjustedPosition = CGPoint(
+                    x: dragPosition.x + dragOffset.x,
+                    y: dragPosition.y + dragOffset.y
+                 )
+                
                  PlacedItemView(item: item) // Use the same view as placed items
-                    .position(dragPosition)
+                    .position(adjustedPosition)
                     .opacity(0.7)
                     .allowsHitTesting(false) // Prevent the overlay from blocking gestures
             }
