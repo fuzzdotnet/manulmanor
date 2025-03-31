@@ -11,134 +11,141 @@ struct HomeView: View {
     // Colors for our theme
     private let primaryColor = Color(red: 0.93, green: 0.86, blue: 0.73) // Warm sand color
     private let accentColor = Color(red: 0.47, green: 0.33, blue: 0.28)  // Earth brown
-    private let backgroundColor = Color(red: 0.95, green: 0.95, blue: 0.97) // Very light gray with hint of purple
+    private let backgroundColor = Color(red: 0.67, green: 0.78, blue: 0.45) // Forest green background
     
     var body: some View {
         GeometryReader { geometry in
             ZStack {
-                // Background - gradient that resembles mountain steppes
-                LinearGradient(
-                    gradient: Gradient(colors: [
-                        backgroundColor,
-                        Color(red: 0.92, green: 0.90, blue: 0.87)
-                    ]),
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
+                // Full-screen nature background that resembles a forest clearing
+                backgroundColor
+                    .ignoresSafeArea()
+                
+                // Ground details
+                VStack {
+                    Spacer()
+                    
+                    // Ground curve
+                    Path { path in
+                        path.move(to: CGPoint(x: 0, y: geometry.size.height * 0.25))
+                        path.addQuadCurve(
+                            to: CGPoint(x: geometry.size.width, y: geometry.size.height * 0.25),
+                            control: CGPoint(x: geometry.size.width/2, y: geometry.size.height * 0.35)
+                        )
+                        path.addLine(to: CGPoint(x: geometry.size.width, y: geometry.size.height))
+                        path.addLine(to: CGPoint(x: 0, y: geometry.size.height))
+                        path.closeSubpath()
+                    }
+                    .fill(Color(red: 0.62, green: 0.73, blue: 0.40))
+                }
                 .ignoresSafeArea()
                 
+                // Main content overlay
                 VStack(alignment: .center, spacing: 0) {
-                    // Top status bar with improved layout
-                    HStack {
-                        // Level badge with improved visuals
-                        VStack(spacing: 0) {
+                    // Top status indicators as a horizontal bar
+                    HStack(spacing: 20) {
+                        // Level badge
+                        HStack(spacing: 6) {
                             ZStack {
                                 Circle()
                                     .fill(accentColor)
-                                    .frame(width: 36, height: 36)
+                                    .frame(width: 32, height: 32)
                                 
                                 Text("\(viewModel.manul.level)")
-                                    .font(.system(size: 18, weight: .bold, design: .rounded))
+                                    .font(.system(size: 16, weight: .bold, design: .rounded))
                                     .foregroundColor(.white)
                             }
                             
-                            Text("Lv")
-                                .font(.system(size: 12, weight: .medium, design: .rounded))
-                                .foregroundColor(accentColor)
-                                .offset(y: -2)
-                        }
-                        .padding(.trailing, 4)
-                        
-                        // XP bar
-                        let xpNeededForNextLevel = viewModel.manul.level * 100
-                        let xpProgress = min(1.0, Double(viewModel.manul.xp) / Double(xpNeededForNextLevel))
-                        
-                        ZStack(alignment: .leading) {
-                            Capsule()
-                                .fill(Color.gray.opacity(0.2))
-                                .frame(height: 8)
+                            // Simple XP bar
+                            let xpNeededForNextLevel = viewModel.manul.level * 100
+                            let xpProgress = min(1.0, Double(viewModel.manul.xp) / Double(xpNeededForNextLevel))
                             
-                            Capsule()
-                                .fill(Color.orange.opacity(0.7))
-                                .frame(width: max(0, CGFloat(xpProgress) * 80), height: 8)
+                            ZStack(alignment: .leading) {
+                                Capsule()
+                                    .fill(Color.black.opacity(0.15))
+                                    .frame(width: 50, height: 6)
+                                
+                                Capsule()
+                                    .fill(Color.white.opacity(0.9))
+                                    .frame(width: max(0, CGFloat(xpProgress) * 50), height: 6)
+                            }
                         }
-                        .frame(width: 80)
+                        .padding(.vertical, 6)
+                        .padding(.horizontal, 10)
+                        .background(Capsule().fill(Color.white.opacity(0.3)))
                         
                         Spacer()
                         
-                        // Currency with improved visuals
-                        HStack(spacing: 2) {
-                            Image(systemName: "dollarsign.circle.fill")
-                                .font(.system(size: 18))
-                                .foregroundColor(Color.yellow)
-                                .shadow(color: .orange.opacity(0.3), radius: 2, x: 0, y: 1)
-                            
-                            Text("\(viewModel.manul.coins)")
-                                .font(.system(size: 18, weight: .bold, design: .rounded))
-                                .foregroundColor(accentColor)
-                        }
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 6)
-                        .background(
-                            Capsule()
-                                .fill(primaryColor)
-                                .shadow(color: Color.black.opacity(0.1), radius: 2, x: 0, y: 1)
-                        )
-                    }
-                    .frame(width: geometry.size.width - 32)
-                    .padding(.top, 12)
-                    .padding(.bottom, 4)
-                    
-                    // Stats indicators with improved layout and visuals
-                    HStack(spacing: 12) {
-                        StatIndicator(
-                            icon: "heart.fill",
-                            value: viewModel.manul.happiness,
-                            color: .red,
-                            label: "Happiness"
-                        )
-                        
-                        StatIndicator(
-                            icon: "fork.knife",
-                            value: viewModel.manul.hunger,
-                            color: .orange,
-                            label: "Hunger"
-                        )
-                        
-                        StatIndicator(
-                            icon: "sparkles",
-                            value: viewModel.manul.hygiene,
-                            color: .blue,
-                            label: "Hygiene"
-                        )
-                    }
-                    .frame(width: geometry.size.width - 32)
-                    .padding(.top, 4)
-                    
-                    // Simple feedback message for interactions
-                    if viewModel.showInteractionFeedback {
+                        // Resource indicators in a row
                         HStack(spacing: 12) {
-                            // Icon based on interaction type
-                            Image(systemName: feedbackIcon(for: viewModel.lastInteractionType))
-                                .font(.system(size: 18, weight: .semibold))
-                                .foregroundColor(.white)
-                                .frame(width: 32, height: 32)
-                                .background(feedbackColor(for: viewModel.lastInteractionType))
-                                .clipShape(Circle())
+                            // Coins
+                            ResourceIndicator(
+                                icon: "dollarsign.circle",
+                                value: "\(viewModel.manul.coins)",
+                                color: .yellow
+                            )
                             
-                            // Message
-                            Text(viewModel.interactionFeedback)
-                                .font(.system(size: 16, weight: .medium, design: .rounded))
-                                .foregroundColor(Color(red: 0.25, green: 0.25, blue: 0.3))
+                            // Add other resources as needed
+                            ResourceIndicator(
+                                icon: "bolt.fill",
+                                value: "500",
+                                color: .green
+                            )
                             
-                            Spacer()
+                            ResourceIndicator(
+                                icon: "diamond.fill",
+                                value: "200",
+                                color: .blue
+                            )
+                            
+                            ResourceIndicator(
+                                icon: "heart.fill",
+                                value: "0",
+                                color: .red
+                            )
                         }
-                        .padding(.horizontal, 16)
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.top, 8)
+                    
+                    // Expandable status indicator (pull down to see)
+                    ExpandableView {
+                        // Stats indicators with improved layout and visuals
+                        HStack(spacing: 12) {
+                            StatIndicator(
+                                icon: "heart.fill",
+                                value: viewModel.manul.happiness,
+                                color: .red,
+                                label: "Happiness"
+                            )
+                            
+                            StatIndicator(
+                                icon: "fork.knife",
+                                value: viewModel.manul.hunger,
+                                color: .orange,
+                                label: "Hunger"
+                            )
+                            
+                            StatIndicator(
+                                icon: "sparkles",
+                                value: viewModel.manul.hygiene,
+                                color: .blue,
+                                label: "Hygiene"
+                            )
+                        }
                         .padding(.vertical, 12)
+                        .padding(.horizontal, 16)
                         .background(
-                            RoundedRectangle(cornerRadius: 12)
-                                .fill(Color.white)
-                                .shadow(color: Color.black.opacity(0.1), radius: 10, x: 0, y: 5)
+                            RoundedRectangle(cornerRadius: 15)
+                                .fill(Color.white.opacity(0.8))
+                        )
+                        .padding(.top, 4)
+                    }
+                    
+                    // Feedback message toast
+                    if viewModel.showInteractionFeedback {
+                        FeedbackToast(
+                            message: viewModel.interactionFeedback,
+                            interactionType: viewModel.lastInteractionType
                         )
                         .padding(.horizontal, 16)
                         .padding(.top, 8)
@@ -149,143 +156,197 @@ struct HomeView: View {
                     
                     Spacer()
                     
-                    // Habitat area with manul and decorations
-                    VStack(spacing: 0) {
-                        RoundedRectangle(cornerRadius: 30)
-                            .fill(primaryColor.opacity(0.5))
+                    // The central habitat area now fills most of the screen
+                    ZStack {
+                        // Circular stone platform for the manul
+                        Circle()
+                            .fill(Color(red: 0.8, green: 0.75, blue: 0.65))
+                            .frame(width: min(geometry.size.width * 0.7, 280))
+                            .shadow(color: Color.black.opacity(0.2), radius: 10, x: 0, y: 5)
                             .overlay(
-                                RoundedRectangle(cornerRadius: 30)
-                                    .stroke(accentColor.opacity(0.2), lineWidth: 1)
+                                // Stone pattern overlay
+                                Circle()
+                                    .stroke(Color.gray.opacity(0.3), lineWidth: 2)
+                                    .background(
+                                        Circle()
+                                            .fill(
+                                                RadialGradient(
+                                                    gradient: Gradient(colors: [
+                                                        Color(red: 0.85, green: 0.8, blue: 0.7),
+                                                        Color(red: 0.75, green: 0.7, blue: 0.6)
+                                                    ]),
+                                                    center: .center,
+                                                    startRadius: 0,
+                                                    endRadius: 140
+                                                )
+                                            )
+                                    )
+                                    .clipShape(Circle())
                             )
-                            .frame(width: geometry.size.width - 32, height: 300)
-                            .overlay {
-                                ZStack {
-                                    // Manul view with reduced size and wearables
-                                    ManulView(mood: viewModel.manul.mood, wearingItems: viewModel.manul.wearingItems, scaleFactor: 0.22)
-                                        .offset(x: habitatOffset)
-                                        .gesture(
-                                            DragGesture()
-                                                .onChanged { value in
-                                                    self.isHabitatDragging = true
-                                                    let horizontalDragLimit: CGFloat = 40
-                                                    self.habitatOffset = min(horizontalDragLimit, max(-horizontalDragLimit, value.translation.width / 3))
-                                                }
-                                                .onEnded { _ in
-                                                    withAnimation(.spring()) {
-                                                        self.habitatOffset = 0
-                                                        self.isHabitatDragging = false
-                                                    }
-                                                }
-                                        )
-                                        .scaleEffect(isHabitatDragging ? 0.95 : 1.0)
-                                        .animation(.spring(response: 0.3), value: isHabitatDragging)
-                                    
-                                    // Placed decorations
-                                    ForEach(viewModel.placedItems) { item in
-                                        if let position = item.position {
-                                            PlacedItemView(item: item)
-                                                .position(position)
+                        
+                        // Cooking pot/cauldron
+                        ZStack {
+                            // Pot base
+                            Circle()
+                                .fill(Color(red: 0.35, green: 0.4, blue: 0.45))
+                                .frame(width: min(geometry.size.width * 0.35, 140), height: min(geometry.size.width * 0.25, 100))
+                            
+                            // Pot contents (soup/stew)
+                            Circle()
+                                .fill(Color.yellow.opacity(0.7))
+                                .frame(width: min(geometry.size.width * 0.3, 120), height: min(geometry.size.width * 0.18, 70))
+                                .offset(y: -10)
+                            
+                            // Spoon/ladle
+                            HStack {
+                                Circle()
+                                    .fill(Color.pink.opacity(0.7))
+                                    .frame(width: 30, height: 30)
+                                    .overlay(
+                                        Circle()
+                                            .stroke(Color.gray, lineWidth: 1)
+                                    )
+                                
+                                Rectangle()
+                                    .fill(Color.gray.opacity(0.8))
+                                    .frame(width: 40, height: 5)
+                            }
+                            .rotationEffect(.degrees(-30))
+                            .offset(x: 40, y: -30)
+                        }
+                        
+                        // Manul character
+                        ManulView(mood: viewModel.manul.mood, wearingItems: viewModel.manul.wearingItems, scaleFactor: 0.3)
+                            .offset(x: habitatOffset, y: -30)
+                            .gesture(
+                                DragGesture()
+                                    .onChanged { value in
+                                        self.isHabitatDragging = true
+                                        let horizontalDragLimit: CGFloat = 40
+                                        self.habitatOffset = min(horizontalDragLimit, max(-horizontalDragLimit, value.translation.width / 3))
+                                    }
+                                    .onEnded { _ in
+                                        withAnimation(.spring()) {
+                                            self.habitatOffset = 0
+                                            self.isHabitatDragging = false
                                         }
                                     }
-                                    
-                                    // Animation for actions
-                                    if let action = selectedAction {
-                                        actionAnimation(for: action)
-                                            .position(x: geometry.size.width / 2, y: geometry.size.height * 0.25) 
-                                    }
-                                }
-                            }
+                            )
+                            .scaleEffect(isHabitatDragging ? 0.95 : 1.0)
+                            .animation(.spring(response: 0.3), value: isHabitatDragging)
                         
-                        // Manul name and mood with improved visuals
-                        VStack(spacing: 4) {
-                            Text(viewModel.manul.name)
-                                .font(.system(size: 24, weight: .bold, design: .rounded))
-                                .foregroundColor(accentColor)
-                            
-                            HStack(spacing: 6) {
-                                Image(systemName: moodIcon(for: viewModel.manul.mood))
-                                    .foregroundColor(moodColor(for: viewModel.manul.mood))
-                                
-                                Text(moodText(for: viewModel.manul.mood))
-                                    .font(.system(size: 16, weight: .medium, design: .rounded))
-                                    .foregroundColor(Color.gray.opacity(0.8))
+                        // Placed decorations
+                        ForEach(viewModel.placedItems) { item in
+                            if let position = item.position {
+                                PlacedItemView(item: item)
+                                    .position(position)
                             }
                         }
-                        .padding(.vertical, 12)
+                        
+                        // Action animations
+                        if let action = selectedAction {
+                            actionAnimation(for: action)
+                                .offset(y: -50)
+                        }
+                    }
+                    .frame(maxHeight: .infinity)
+                    
+                    // Bottom action area
+                    VStack(spacing: 8) {
+                        // Manul name and mood
+                        HStack(spacing: 6) {
+                            Image(systemName: moodIcon(for: viewModel.manul.mood))
+                                .foregroundColor(moodColor(for: viewModel.manul.mood))
+                            
+                            Text(viewModel.manul.name)
+                                .font(.system(size: 20, weight: .bold, design: .rounded))
+                                .foregroundColor(.white)
+                            
+                            Text("• \(moodText(for: viewModel.manul.mood))")
+                                .font(.system(size: 16, weight: .medium, design: .rounded))
+                                .foregroundColor(.white.opacity(0.8))
+                        }
+                        .padding(.vertical, 8)
+                        
+                        // Minimalistic action buttons
+                        HStack(spacing: geometry.size.width * 0.08) {
+                            CircleActionButton(
+                                icon: "fork.knife",
+                                color: .orange
+                            ) {
+                                showingFoodSelection = true
+                            }
+                            
+                            CircleActionButton(
+                                icon: "sparkles",
+                                color: .blue
+                            ) {
+                                withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
+                                    selectedAction = "clean"
+                                }
+                                
+                                // Add haptic feedback
+                                let impactMed = UIImpactFeedbackGenerator(style: .medium)
+                                impactMed.impactOccurred()
+                                
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) {
+                                    viewModel.cleanManul()
+                                    selectedAction = nil
+                                }
+                            }
+                            
+                            CircleActionButton(
+                                icon: "heart.fill",
+                                color: .red
+                            ) {
+                                withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
+                                    selectedAction = "play"
+                                }
+                                
+                                // Add haptic feedback
+                                let impactMed = UIImpactFeedbackGenerator(style: .medium)
+                                impactMed.impactOccurred()
+                                
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) {
+                                    viewModel.playWithManul()
+                                    selectedAction = nil
+                                }
+                            }
+                        }
+                        .padding(.bottom, 16)
+                    }
+                    .padding(.bottom, 20)
+                }
+                
+                // Certificate button in the corner
+                VStack {
+                    HStack {
+                        Spacer()
+                        
+                        Button(action: {
+                            showingCertificate = true
+                        }) {
+                            ZStack {
+                                Circle()
+                                    .fill(Color.yellow.opacity(0.9))
+                                    .frame(width: 44, height: 44)
+                                    .shadow(color: Color.black.opacity(0.2), radius: 4, x: 0, y: 2)
+                                
+                                Image(systemName: "star.fill")
+                                    .foregroundColor(.white)
+                                    .font(.system(size: 20, weight: .bold))
+                            }
+                        }
+                        .padding(.top, 24)
+                        .padding(.trailing, 16)
                     }
                     
                     Spacer()
-                    
-                    // Action buttons with improved layout and visuals
-                    HStack(spacing: geometry.size.width * 0.06) {
-                        ImprovedActionButton(
-                            title: "Feed",
-                            icon: "fork.knife",
-                            color: .orange
-                        ) {
-                            showingFoodSelection = true
-                        }
-                        
-                        ImprovedActionButton(
-                            title: "Clean",
-                            icon: "sparkles",
-                            color: .blue
-                        ) {
-                            withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
-                                selectedAction = "clean"
-                            }
-                            
-                            // Add haptic feedback
-                            let impactMed = UIImpactFeedbackGenerator(style: .medium)
-                            impactMed.impactOccurred()
-                            
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) {
-                                viewModel.cleanManul()
-                                selectedAction = nil
-                            }
-                        }
-                        
-                        ImprovedActionButton(
-                            title: "Play",
-                            icon: "heart.fill",
-                            color: .red
-                        ) {
-                            withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
-                                selectedAction = "play"
-                            }
-                            
-                            // Add haptic feedback
-                            let impactMed = UIImpactFeedbackGenerator(style: .medium)
-                            impactMed.impactOccurred()
-                            
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) {
-                                viewModel.playWithManul()
-                                selectedAction = nil
-                            }
-                        }
-                        
-                        ImprovedActionButton(
-                            title: "Certificate",
-                            icon: "doc.badge.fill",
-                            color: .purple
-                        ) {
-                            // Add haptic feedback
-                            let impactMed = UIImpactFeedbackGenerator(style: .medium)
-                            impactMed.impactOccurred()
-                            
-                            showingCertificate = true
-                        }
-                    }
-                    .frame(width: geometry.size.width - 32, alignment: .center)
-                    .padding(.bottom, 25)
                 }
             }
         }
-        .sheet(isPresented: $showingCertificate) {
-            CertificateView(certificate: viewModel.generateAdoptionCertificate())
-        }
         .sheet(isPresented: $showingFoodSelection) {
-            FoodSelectionView { foodItem in
+            FoodSelectionView(onSelectFood: { foodItem in
                 withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
                     selectedAction = "feed"
                 }
@@ -298,74 +359,248 @@ struct HomeView: View {
                     viewModel.feedManul(with: foodItem)
                     selectedAction = nil
                 }
-            }
+            })
+        }
+        .sheet(isPresented: $showingCertificate) {
+            CertificateView(certificate: viewModel.generateAdoptionCertificate())
         }
     }
     
-    // Action animations with improved visuals
-    @ViewBuilder
-    func actionAnimation(for action: String) -> some View {
-        switch action {
-        case "feed":
-            ZStack {
-                Circle()
-                    .fill(Color.orange.opacity(0.3))
-                    .frame(width: 80, height: 80)
-                
+    // Helper for feeding action
+    private func feedManul() {
+        withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
+            selectedAction = "feed"
+        }
+        
+        // Add haptic feedback
+        let impactMed = UIImpactFeedbackGenerator(style: .medium)
+        impactMed.impactOccurred()
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) {
+            viewModel.feedManul()
+            selectedAction = nil
+        }
+    }
+    
+    // Helper functions for mood indicators
+    private func moodIcon(for mood: Manul.Mood) -> String {
+        switch mood {
+        case .happy: return "face.smiling"
+        case .neutral: return "face.neutral"
+        case .sad: return "face.concerned"
+        case .unhappy: return "face.sad"
+        }
+    }
+    
+    private func moodColor(for mood: Manul.Mood) -> Color {
+        switch mood {
+        case .happy: return .green
+        case .neutral: return .yellow
+        case .sad: return .orange
+        case .unhappy: return .red
+        }
+    }
+    
+    private func moodText(for mood: Manul.Mood) -> String {
+        switch mood {
+        case .happy: return "Happy"
+        case .neutral: return "Content"
+        case .sad: return "Sad"
+        case .unhappy: return "Unhappy"
+        }
+    }
+    
+    // Animation helper
+    private func actionAnimation(for action: String) -> some View {
+        Group {
+            switch action {
+            case "feed":
                 Image(systemName: "fork.knife")
-                    .font(.system(size: 40))
+                    .font(.system(size: 50))
                     .foregroundColor(.orange)
-            }
-            .transition(.scale.combined(with: .opacity))
-        case "clean":
-            ZStack {
-                Circle()
-                    .fill(Color.blue.opacity(0.3))
-                    .frame(width: 80, height: 80)
-                
+                    .opacity(0.8)
+                    .scaleEffect(1.2)
+                    .rotationEffect(.degrees(15))
+                    .animation(.easeInOut(duration: 0.5).repeatForever(autoreverses: true), value: selectedAction)
+            case "clean":
                 Image(systemName: "sparkles")
-                    .font(.system(size: 40))
+                    .font(.system(size: 50))
                     .foregroundColor(.blue)
+                    .opacity(0.8)
+                    .scaleEffect(1.2)
+                    .animation(.easeInOut(duration: 0.5).repeatForever(autoreverses: true), value: selectedAction)
+            case "play":
+                Image(systemName: "heart.fill")
+                    .font(.system(size: 50))
+                    .foregroundColor(.red)
+                    .opacity(0.8)
+                    .scaleEffect(1.2)
+                    .animation(.easeInOut(duration: 0.5).repeatForever(autoreverses: true), value: selectedAction)
+            default:
+                EmptyView()
             }
-            .transition(.scale.combined(with: .opacity))
-        case "play":
-            // If there's a selected toy, show its icon
-            if let selectedToyId = viewModel.selectedToy,
-               let selectedToy = viewModel.inventory.first(where: { $0.id == selectedToyId }) {
-                ZStack {
-                    Circle()
-                        .fill(Color.yellow.opacity(0.3))
-                        .frame(width: 80, height: 80)
-                    
-                    Image(systemName: iconFor(selectedToy))
-                        .font(.system(size: 40))
-                        .foregroundColor(colorFor(item: selectedToy))
-                }
-                .transition(.scale.combined(with: .opacity))
-            } else {
-                // Default play animation if no toy is selected
-                ZStack {
-                    Circle()
-                        .fill(Color.red.opacity(0.3))
-                        .frame(width: 80, height: 80)
-                    
-                    Image(systemName: "heart.fill")
-                        .font(.system(size: 40))
-                        .foregroundColor(.red)
-                }
-                .transition(.scale.combined(with: .opacity))
-            }
-        default:
-            EmptyView()
         }
     }
     
-    // Helper functions for mood display
-    // Removed: Moved to Utilities/ViewHelpers.swift
+    // Helper for feedback icons
+    private func feedbackIcon(for interactionType: String) -> String {
+        switch interactionType {
+        case "feed": return "fork.knife"
+        case "clean": return "sparkles"
+        case "play": return "heart.fill"
+        case "purchase_success": return "cart.fill.badge.plus"
+        case "place_item", "remove_item": return "chair.fill"
+        default: return "info.circle"
+        }
+    }
     
-    // Helper function to determine icon for placed items
-    // Removed: Moved to Utilities/ViewHelpers.swift
+    // Helper for feedback colors
+    private func feedbackColor(for interactionType: String) -> Color {
+        switch interactionType {
+        case "feed": return .orange
+        case "clean": return .blue
+        case "play": return .red
+        case "purchase_success": return .green
+        case "place_item", "remove_item": return .purple
+        default: return .gray
+        }
+    }
 }
+
+// New compact resource indicator
+struct ResourceIndicator: View {
+    let icon: String
+    let value: String
+    let color: Color
+    
+    var body: some View {
+        HStack(spacing: 4) {
+            Image(systemName: icon)
+                .foregroundColor(color)
+                .font(.system(size: 12, weight: .bold))
+            
+            Text(value)
+                .font(.system(size: 12, weight: .bold, design: .rounded))
+                .foregroundColor(.white)
+        }
+        .padding(.vertical, 4)
+        .padding(.horizontal, 8)
+        .background(Capsule().fill(Color.black.opacity(0.2)))
+    }
+}
+
+// Circle action button for minimalist design
+struct CircleActionButton: View {
+    let icon: String
+    let color: Color
+    let action: () -> Void
+    
+    var body: some View {
+        Button(action: action) {
+            ZStack {
+                Circle()
+                    .fill(Color.white.opacity(0.9))
+                    .frame(width: 60, height: 60)
+                    .shadow(color: color.opacity(0.3), radius: 5, x: 0, y: 2)
+                
+                Image(systemName: icon)
+                    .font(.system(size: 24))
+                    .foregroundColor(color)
+            }
+        }
+    }
+}
+
+// Expandable view component
+struct ExpandableView<Content: View>: View {
+    @State private var isExpanded = false
+    let content: Content
+    
+    init(@ViewBuilder content: () -> Content) {
+        self.content = content()
+    }
+    
+    var body: some View {
+        VStack(spacing: 0) {
+            // Pull tab
+            Button(action: {
+                withAnimation(.spring()) {
+                    isExpanded.toggle()
+                }
+            }) {
+                Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
+                    .foregroundColor(.white)
+                    .padding(8)
+                    .background(Capsule().fill(Color.black.opacity(0.3)))
+                    .padding(.top, 4)
+            }
+            
+            if isExpanded {
+                content
+                    .padding(.top, 8)
+                    .transition(.move(edge: .top).combined(with: .opacity))
+            }
+        }
+    }
+}
+
+// Feedback toast component
+struct FeedbackToast: View {
+    let message: String
+    let interactionType: String
+    
+    var body: some View {
+        HStack(spacing: 12) {
+            // Icon based on interaction type
+            Image(systemName: feedbackIcon(for: interactionType))
+                .font(.system(size: 18, weight: .semibold))
+                .foregroundColor(.white)
+                .frame(width: 32, height: 32)
+                .background(feedbackColor(for: interactionType))
+                .clipShape(Circle())
+            
+            // Message
+            Text(message)
+                .font(.system(size: 16, weight: .medium, design: .rounded))
+                .foregroundColor(Color(red: 0.25, green: 0.25, blue: 0.3))
+            
+            Spacer()
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 12)
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .fill(Color.white)
+                .shadow(color: Color.black.opacity(0.1), radius: 10, x: 0, y: 5)
+        )
+    }
+    
+    // Helper for feedback icons
+    private func feedbackIcon(for interactionType: String) -> String {
+        switch interactionType {
+        case "feed": return "fork.knife"
+        case "clean": return "sparkles"
+        case "play": return "heart.fill"
+        case "purchase_success": return "cart.fill.badge.plus"
+        case "place_item", "remove_item": return "chair.fill"
+        default: return "info.circle"
+        }
+    }
+    
+    // Helper for feedback colors
+    private func feedbackColor(for interactionType: String) -> Color {
+        switch interactionType {
+        case "feed": return .orange
+        case "clean": return .blue
+        case "play": return .red
+        case "purchase_success": return .green
+        case "place_item", "remove_item": return .purple
+        default: return .gray
+        }
+    }
+}
+
+// Previous ImprovedActionButton is no longer needed with new design
 
 // Improved certificate view
 struct CertificateView: View {
