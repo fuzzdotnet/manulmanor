@@ -150,54 +150,56 @@ struct HomeView: View {
                     Spacer()
                     
                     // Habitat area with manul and decorations
-                    ZStack {
-                        // Habitat background
-                        RoundedRectangle(cornerRadius: 30)
-                            .fill(primaryColor.opacity(0.5))
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 30)
-                                    .stroke(accentColor.opacity(0.2), lineWidth: 1)
-                            )
-                        
-                        // Manul view with reduced size
-                        ManulView(mood: viewModel.manul.mood)
-                            .frame(width: 40, height: 40) // Reduced size further
-                            .offset(x: habitatOffset)
-                            .gesture(
-                                DragGesture()
-                                    .onChanged { value in
-                                        self.isHabitatDragging = true
-                                        let horizontalDragLimit: CGFloat = 40
-                                        self.habitatOffset = min(horizontalDragLimit, max(-horizontalDragLimit, value.translation.width / 3))
-                                    }
-                                    .onEnded { _ in
-                                        withAnimation(.spring()) {
-                                            self.habitatOffset = 0
-                                            self.isHabitatDragging = false
+                    HStack {
+                        Spacer() // Add equal spacing on both sides
+                        ZStack {
+                            // Habitat background
+                            RoundedRectangle(cornerRadius: 30)
+                                .fill(primaryColor.opacity(0.5))
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 30)
+                                        .stroke(accentColor.opacity(0.2), lineWidth: 1)
+                                )
+                            
+                            // Manul view with reduced size
+                            ManulView(mood: viewModel.manul.mood)
+                                .frame(width: 40, height: 40) // Reduced size further
+                                .offset(x: habitatOffset)
+                                .gesture(
+                                    DragGesture()
+                                        .onChanged { value in
+                                            self.isHabitatDragging = true
+                                            let horizontalDragLimit: CGFloat = 40
+                                            self.habitatOffset = min(horizontalDragLimit, max(-horizontalDragLimit, value.translation.width / 3))
                                         }
-                                    }
-                            )
-                            .scaleEffect(isHabitatDragging ? 0.95 : 1.0)
-                            .animation(.spring(response: 0.3), value: isHabitatDragging)
-                        
-                        // Placed decorations
-                        ForEach(viewModel.placedItems) { item in
-                            if let position = item.position {
-                                PlacedItemView(item: item)
-                                    .position(position)
+                                        .onEnded { _ in
+                                            withAnimation(.spring()) {
+                                                self.habitatOffset = 0
+                                                self.isHabitatDragging = false
+                                            }
+                                        }
+                                )
+                                .scaleEffect(isHabitatDragging ? 0.95 : 1.0)
+                                .animation(.spring(response: 0.3), value: isHabitatDragging)
+                            
+                            // Placed decorations
+                            ForEach(viewModel.placedItems) { item in
+                                if let position = item.position {
+                                    PlacedItemView(item: item)
+                                        .position(position)
+                                }
+                            }
+                            
+                            // Animation for actions
+                            if let action = selectedAction {
+                                actionAnimation(for: action)
+                                    .position(x: geometry.size.width / 2, y: geometry.size.height * 0.25) 
                             }
                         }
-                        
-                        // Animation for actions
-                        if let action = selectedAction {
-                            actionAnimation(for: action)
-                                .position(x: geometry.size.width / 2, y: geometry.size.height * 0.25) 
-                        }
+                        .frame(height: 300)
+                        .frame(maxWidth: geometry.size.width - 32) // Match the exact spacing needed
+                        Spacer() // Add equal spacing on both sides
                     }
-                    // Apply frame with fixed height and center within the screen
-                    .frame(height: 300)
-                    .frame(maxWidth: .infinity) // Ensure it takes full width
-                    .padding(.horizontal, 16)
                     
                     // Manul name and mood with improved visuals
                     VStack(spacing: 4) {
