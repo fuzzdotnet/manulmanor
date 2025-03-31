@@ -16,7 +16,7 @@ struct HomeView: View {
     
     var body: some View {
         GeometryReader { geometry in
-            ZStack {
+            ZStack(alignment: .top) {
                 // Full-screen nature background that resembles a forest clearing
                 backgroundColor
                     .ignoresSafeArea()
@@ -40,154 +40,10 @@ struct HomeView: View {
                 }
                 .ignoresSafeArea()
                 
-                // Main content overlay
-                VStack(alignment: .center, spacing: 0) {
-                    // Top status indicators as a horizontal bar
-                    HStack(spacing: 0) {
-                        // Level badge with XP
-                        HStack(spacing: 6) {
-                            ZStack {
-                                Circle()
-                                    .fill(accentColor)
-                                    .frame(width: 36, height: 36)
-                                
-                                Text("\(viewModel.manul.level)")
-                                    .font(.system(size: 18, weight: .bold, design: .rounded))
-                                    .foregroundColor(.white)
-                            }
-                            
-                            // Simple XP bar
-                            let xpNeededForNextLevel = viewModel.manul.level * 100
-                            let xpProgress = min(1.0, Double(viewModel.manul.xp) / Double(xpNeededForNextLevel))
-                            
-                            ZStack(alignment: .leading) {
-                                Capsule()
-                                    .fill(Color.black.opacity(0.15))
-                                    .frame(width: 60, height: 6)
-                                
-                                Capsule()
-                                    .fill(Color.white.opacity(0.9))
-                                    .frame(width: max(0, CGFloat(xpProgress) * 60), height: 6)
-                            }
-                        }
-                        .padding(.vertical, 10)
-                        .padding(.horizontal, 12)
-                        .background(Capsule().fill(Color.white.opacity(0.3)))
-                        
-                        Spacer()
-                        
-                        // Expandable stats trigger in the center top
-                        Button(action: {
-                            withAnimation(.spring()) {
-                                isStatsExpanded.toggle()
-                            }
-                        }) {
-                            Image(systemName: isStatsExpanded ? "chevron.up" : "chevron.down")
-                                .foregroundColor(.white)
-                                .padding(10)
-                                .background(Circle().fill(Color.black.opacity(0.3)))
-                        }
-                        .padding(.horizontal, 10)
-                        
-                        Spacer()
-                        
-                        // Coins currency - now matching level indicator's style
-                        HStack(spacing: 6) {
-                            ZStack {
-                                Circle()
-                                    .fill(Color.yellow.opacity(0.8))
-                                    .frame(width: 36, height: 36)
-                                
-                                Image(systemName: "dollarsign.circle")
-                                    .foregroundColor(.white)
-                                    .font(.system(size: 18, weight: .bold))
-                            }
-                            
-                            Text("\(viewModel.manul.coins)")
-                                .font(.system(size: 18, weight: .bold, design: .rounded))
-                                .foregroundColor(.white)
-                        }
-                        .padding(.vertical, 10)
-                        .padding(.horizontal, 12)
-                        .background(Capsule().fill(Color.white.opacity(0.3)))
-                    }
-                    .padding(.horizontal, 16)
-                    .padding(.top, 12)
-                    
-                    // Fixed-size stats container area
-                    ZStack(alignment: .top) {
-                        // Transparent placeholder to reserve space
-                        Color.clear
-                            .frame(height: isStatsExpanded ? 100 : 10)
-                        
-                        // Stats panel - now appears in overlay without pushing content
-                        if isStatsExpanded {
-                            // Stats indicators with improved layout and visuals
-                            HStack(spacing: 12) {
-                                // Happiness stat
-                                StatCard(
-                                    icon: "heart.fill",
-                                    iconColor: .red,
-                                    label: "Happiness",
-                                    value: viewModel.manul.happiness,
-                                    color: .red
-                                )
-                                
-                                // Hunger stat
-                                StatCard(
-                                    icon: "fork.knife",
-                                    iconColor: .orange,
-                                    label: "Hunger",
-                                    value: viewModel.manul.hunger,
-                                    color: .orange
-                                )
-                                
-                                // Hygiene stat
-                                StatCard(
-                                    icon: "sparkles",
-                                    iconColor: .blue,
-                                    label: "Hygiene",
-                                    value: viewModel.manul.hygiene,
-                                    color: .blue
-                                )
-                            }
-                            .padding(.horizontal, 16)
-                            .padding(.top, 8)
-                            .transition(.opacity.combined(with: .move(edge: .top)))
-                        }
-                    }
-                    
-                    // Stats visual separator - subtle curved background
-                    if isStatsExpanded {
-                        Path { path in
-                            path.move(to: CGPoint(x: 0, y: 0))
-                            path.addQuadCurve(
-                                to: CGPoint(x: geometry.size.width, y: 0),
-                                control: CGPoint(x: geometry.size.width/2, y: 30)
-                            )
-                            path.addLine(to: CGPoint(x: geometry.size.width, y: 60))
-                            path.addLine(to: CGPoint(x: 0, y: 60))
-                            path.closeSubpath()
-                        }
-                        .fill(Color.white.opacity(0.1))
-                        .frame(height: 60)
-                        .offset(y: -40)
-                    }
-                    
-                    // Feedback message toast
-                    if viewModel.showInteractionFeedback {
-                        FeedbackToast(
-                            message: viewModel.interactionFeedback,
-                            interactionType: viewModel.lastInteractionType
-                        )
-                        .padding(.horizontal, 16)
-                        .padding(.top, 8)
-                        .transition(.move(edge: .top).combined(with: .opacity))
-                        .animation(.spring(response: 0.4, dampingFraction: 0.7), value: viewModel.showInteractionFeedback)
-                        .zIndex(100)
-                    }
-                    
+                // Main content area
+                VStack(spacing: 0) {
                     Spacer()
+                        .frame(height: 60) // Space for the top bar
                     
                     // The central habitat area now fills most of the screen
                     ZStack {
@@ -413,6 +269,156 @@ struct HomeView: View {
                         .padding(.bottom, 16)
                     }
                     .padding(.bottom, 20)
+                }
+                
+                // =================================================================
+                // FIXED OVERLAY ELEMENTS THAT DON'T AFFECT LAYOUT
+                // =================================================================
+                
+                // Top status bar - Fixed at top and doesn't participate in layout flow
+                VStack(spacing: 0) {
+                    HStack(spacing: 0) {
+                        // Level badge with XP
+                        HStack(spacing: 6) {
+                            ZStack {
+                                Circle()
+                                    .fill(accentColor)
+                                    .frame(width: 36, height: 36)
+                                
+                                Text("\(viewModel.manul.level)")
+                                    .font(.system(size: 18, weight: .bold, design: .rounded))
+                                    .foregroundColor(.white)
+                            }
+                            
+                            // Simple XP bar
+                            let xpNeededForNextLevel = viewModel.manul.level * 100
+                            let xpProgress = min(1.0, Double(viewModel.manul.xp) / Double(xpNeededForNextLevel))
+                            
+                            ZStack(alignment: .leading) {
+                                Capsule()
+                                    .fill(Color.black.opacity(0.15))
+                                    .frame(width: 60, height: 6)
+                                
+                                Capsule()
+                                    .fill(Color.white.opacity(0.9))
+                                    .frame(width: max(0, CGFloat(xpProgress) * 60), height: 6)
+                            }
+                        }
+                        .padding(.vertical, 10)
+                        .padding(.horizontal, 12)
+                        .background(Capsule().fill(Color.white.opacity(0.3)))
+                        
+                        Spacer()
+                        
+                        // Toggle button for stats panel
+                        Button(action: {
+                            withAnimation(.spring()) {
+                                isStatsExpanded.toggle()
+                            }
+                        }) {
+                            Image(systemName: isStatsExpanded ? "chevron.up" : "chevron.down")
+                                .foregroundColor(.white)
+                                .padding(10)
+                                .background(Circle().fill(Color.black.opacity(0.3)))
+                        }
+                        .padding(.horizontal, 10)
+                        
+                        Spacer()
+                        
+                        // Coins currency - now matching level indicator's style
+                        HStack(spacing: 6) {
+                            ZStack {
+                                Circle()
+                                    .fill(Color.yellow.opacity(0.8))
+                                    .frame(width: 36, height: 36)
+                                
+                                Image(systemName: "dollarsign.circle")
+                                    .foregroundColor(.white)
+                                    .font(.system(size: 18, weight: .bold))
+                            }
+                            
+                            Text("\(viewModel.manul.coins)")
+                                .font(.system(size: 18, weight: .bold, design: .rounded))
+                                .foregroundColor(.white)
+                        }
+                        .padding(.vertical, 10)
+                        .padding(.horizontal, 12)
+                        .background(Capsule().fill(Color.white.opacity(0.3)))
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.top, 12)
+                    
+                    // Stats panel overlay - positioned absolutely
+                    if isStatsExpanded {
+                        // Semi-transparent background panel that expands from the top
+                        VStack(spacing: 0) {
+                            // Background panel with gradient
+                            Rectangle()
+                                .fill(
+                                    LinearGradient(
+                                        gradient: Gradient(colors: [
+                                            Color.black.opacity(0.2),
+                                            Color.black.opacity(0.0)
+                                        ]),
+                                        startPoint: .top,
+                                        endPoint: .bottom
+                                    )
+                                )
+                                .frame(height: 130)
+                            
+                            // Stats cards
+                            HStack(spacing: 12) {
+                                // Happiness stat
+                                StatCard(
+                                    icon: "heart.fill",
+                                    iconColor: .red,
+                                    label: "Happiness",
+                                    value: viewModel.manul.happiness,
+                                    color: .red
+                                )
+                                
+                                // Hunger stat
+                                StatCard(
+                                    icon: "fork.knife",
+                                    iconColor: .orange,
+                                    label: "Hunger",
+                                    value: viewModel.manul.hunger,
+                                    color: .orange
+                                )
+                                
+                                // Hygiene stat
+                                StatCard(
+                                    icon: "sparkles",
+                                    iconColor: .blue,
+                                    label: "Hygiene",
+                                    value: viewModel.manul.hygiene,
+                                    color: .blue
+                                )
+                            }
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 8)
+                            .offset(y: -70)
+                        }
+                        .transition(.opacity.combined(with: .move(edge: .top)))
+                    }
+                }
+                .zIndex(100) // Ensure the top bar is always on top
+                
+                // Toast message overlay
+                if viewModel.showInteractionFeedback {
+                    VStack {
+                        FeedbackToast(
+                            message: viewModel.interactionFeedback,
+                            interactionType: viewModel.lastInteractionType
+                        )
+                        .padding(.horizontal, 16)
+                        .padding(.top, 70) // Position below the top bar
+                        
+                        Spacer()
+                    }
+                    .transition(.move(edge: .top).combined(with: .opacity))
+                    .animation(.spring(response: 0.4, dampingFraction: 0.7), value: viewModel.showInteractionFeedback)
+                    .zIndex(101) // Above everything else
                 }
             }
         }
