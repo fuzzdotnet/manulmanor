@@ -39,7 +39,7 @@ struct HomeView: View {
             .ignoresSafeArea()
             
             // Content layer
-            VStack {
+            VStack(alignment: .center, spacing: 0) {
                 // Habitat area
                 Spacer()
                     .frame(height: 160) // Reserve space for top elements but don't change with stats
@@ -186,7 +186,8 @@ struct HomeView: View {
                             .rotationEffect(.degrees(Double(i * 45)))
                     }
                 }
-                .frame(maxHeight: .infinity)
+                .frame(maxWidth: .infinity) // Ensure habitat takes full width
+                .frame(maxHeight: .infinity) // Use available space
                 
                 // Bottom action area
                 VStack(spacing: 8) {
@@ -257,8 +258,10 @@ struct HomeView: View {
                     }
                     .padding(.bottom, 16)
                 }
+                .frame(maxWidth: .infinity) // Ensure bottom content takes full width
                 .padding(.bottom, 20)
             }
+            .frame(width: geometry.size.width) // Set explicit width to ensure centered content
             
             // =====================================
             // FIXED OVERLAY LAYERS
